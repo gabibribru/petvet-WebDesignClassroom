@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Comparativo de Resultados</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .container-comparativo {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .seletor-comparacao {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .grid-seletor {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .grafico-container {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      overflow-x: auto;
+    }
+
+    .grafico-titulo {
+      color: var(--cor-primaria);
+      margin-top: 0;
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .grafico-barras {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 300px;
+      gap: var(--espaco-md);
+      min-width: 100%;
+    }
+
+    .barra-grupo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 80px;
+    }
+
+    .barra {
+      width: 40px;
+      background: linear-gradient(to top, var(--cor-primaria), var(--cor-primaria-clara));
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      transition: all var(--transicao-rapida);
+    }
+
+    .barra:hover {
+      background: linear-gradient(to top, var(--cor-primaria-hover), var(--cor-primaria));
+      filter: brightness(1.1);
+    }
+
+    .valor-barra {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 600;
+      color: var(--cor-texto);
+      font-size: 0.9rem;
+    }
+
+    .label-barra {
+      margin-top: var(--espaco-md);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--cor-texto-suave);
+      word-break: break-word;
+    }
+
+    .tabela-comparativa {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      overflow: hidden;
+      box-shadow: 0 1px 3px var(--sombra);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .tabela-comparativa th {
+      background-color: var(--cor-primaria-clara);
+      color: var(--cor-texto);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .tabela-comparativa td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .tabela-comparativa tr:hover {
+      background-color: var(--cor-fundo);
+    }
+
+    .valor-normal {
+      color: var(--cor-sucesso);
+      font-weight: 600;
+    }
+
+    .valor-alerta {
+      color: var(--cor-aviso);
+      font-weight: 600;
+    }
+
+    .valor-critico {
+      color: var(--cor-erro);
+      font-weight: 600;
+    }
+
+    .legenda {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      padding: var(--espaco-lg);
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      margin-top: var(--espaco-lg);
+    }
+
+    .item-legenda {
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-sm);
+      font-size: 0.9rem;
+    }
+
+    .quadrado-legenda {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+
+    .insights {
+      background-color: var(--cor-primaria-clara);
+      border-left: 4px solid var(--cor-primaria);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-top: var(--espaco-lg);
+    }
+
+    .insights h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+    }
+
+    .insights ul {
+      margin: var(--espaco-md) 0;
+      padding-left: 1.5rem;
+    }
+
+    .insights li {
+      margin-bottom: 0.5rem;
+      color: var(--cor-texto);
+    }
+
+    @media (max-width: 768px) {
+      .grid-seletor {
+        grid-template-columns: 1fr;
+      }
+
+      .grafico-barras {
+        height: 250px;
+      }
+
+      .legenda {
+        flex-direction: column;
+        gap: var(--espaco-md);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Comparativo de Resultados</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <div class="container-comparativo">
+        <!-- Seletor de Comparação -->
+        <div class="seletor-comparacao">
+          <h2>🔄 Selecione os Exames para Comparar</h2>
+          <div class="grid-seletor">
+            <div class="campo-formulario">
+              <label for="animal-select">Animal</label>
+              <select id="animal-select" onchange="atualizarComparativo()">
+                <option value="fluffy">Fluffy (Gato)</option>
+                <option value="rex">Rex (Cão)</option>
+              </select>
+            </div>
+
+            <div class="campo-formulario">
+              <label for="tipo-exame-select">Tipo de Exame</label>
+              <select id="tipo-exame-select" onchange="atualizarComparativo()">
+                <option value="sangue">Exame de Sangue</option>
+                <option value="radiografia">Radiografia</option>
+              </select>
+            </div>
+
+            <div class="campo-formulario">
+              <label for="periodo-select">Período</label>
+              <select id="periodo-select" onchange="atualizarComparativo()">
+                <option value="6meses">Últimos 6 meses</option>
+                <option value="1ano">1 ano</option>
+                <option value="2anos">2 anos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de Comparação -->
+        <div class="grafico-container">
+          <h3 class="grafico-titulo">📊 Evolução - Hemoglobina (g/dL)</h3>
+          <div class="grafico-barras" id="grafico-barras"></div>
+        </div>
+
+        <!-- Tabela de Comparação -->
+        <div class="grafico-container">
+          <h3 class="grafico-titulo">📋 Detalhes dos Exames</h3>
+          <table class="tabela-comparativa" id="tabela-comparativa"></table>
+        </div>
+
+        <!-- Legenda -->
+        <div class="legenda">
+          <div class="item-legenda">
+            <div class="quadrado-legenda" style="background-color: var(--cor-sucesso)"></div>
+            <span>Valores Normais</span>
+          </div>
+          <div class="item-legenda">
+            <div class="quadrado-legenda" style="background-color: var(--cor-aviso)"></div>
+            <span>Alerta - Fora do Normal</span>
+          </div>
+          <div class="item-legenda">
+            <div class="quadrado-legenda" style="background-color: var(--cor-erro)"></div>
+            <span>Crítico - Requer Atenção</span>
+          </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="insights">
+          <h3>💡 Insights Analíticos</h3>
+          <ul id="insights-lista"></ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de comparação
+    const dadosComparacao = {
+      fluffy: {
+        sangue: [
+          { data: "2025-02-15", hemoglobina: 12.5, plaquetas: 245, leucocitos: 7.2 },
+          { data: "2025-03-20", hemoglobina: 12.8, plaquetas: 250, leucocitos: 7.5 },
+          { data: "2025-04-15", hemoglobina: 13.1, plaquetas: 255, leucocitos: 7.3 },
+        ],
+        radiografia: [
+          { data: "2025-03-10", resultado: "Normal", achados: "Nenhum achado relevante" },
+          { data: "2025-04-15", resultado: "Normal", achados: "Coração e pulmões normais" },
+        ],
+      },
+      rex: {
+        sangue: [
+          { data: "2025-01-20", hemoglobina: 14.2, plaquetas: 280, leucocitos: 8.1 },
+          { data: "2025-03-10", hemoglobina: 13.9, plaquetas: 275, leucocitos: 7.9 },
+          { data: "2025-04-18", hemoglobina: 13.5, plaquetas: 270, leucocitos: 7.6 },
+        ],
+        radiografia: [
+          { data: "2025-02-20", resultado: "Com achados", achados: "Pequeno nódulo em pulmão" },
+          { data: "2025-04-18", resultado: "Com achados", achados: "Nódulo estável" },
+        ],
+      },
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      atualizarComparativo();
+    });
+
+    function atualizarComparativo() {
+      const animal = document.getElementById("animal-select").value;
+      const tipoExame = document.getElementById("tipo-exame-select").value;
+
+      const dados = dadosComparacao[animal]?.[tipoExame] || [];
+
+      if (tipoExame === "sangue") {
+        renderizarGraficoSangue(dados);
+        renderizarTabelaSangue(dados);
+        renderizarInsightsSangue(dados);
+      } else {
+        renderizarGraficoRadiografia(dados);
+        renderizarTabelaRadiografia(dados);
+        renderizarInsightsRadiografia(dados);
+      }
+    }
+
+    function renderizarGraficoSangue(dados) {
+      const container = document.getElementById("grafico-barras");
+      const maxValor = 16;
+
+      container.innerHTML = dados
+        .map((d, i) => {
+          const altura = (d.hemoglobina / maxValor) * 100;
+          const classe = d.hemoglobina >= 12 ? "valor-normal" : d.hemoglobina >= 10 ? "valor-alerta" : "valor-critico";
+          return `
+          <div class="barra-grupo">
+            <div class="barra" style="height: ${altura}%;">
+              <span class="valor-barra">${d.hemoglobina}</span>
+            </div>
+            <div class="label-barra">${new Date(d.data).toLocaleDateString("pt-BR")}</div>
+          </div>
+        `;
+        })
+        .join("");
+    }
+
+    function renderizarTabelaSangue(dados) {
+      const container = document.getElementById("tabela-comparativa");
+
+      container.innerHTML = `
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hemoglobina (g/dL)</th>
+            <th>Plaquetas (mil/μL)</th>
+            <th>Leucócitos (mil/μL)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${dados
+            .map((d) => {
+              const statusHem =
+                d.hemoglobina >= 12 ? "valor-normal" : d.hemoglobina >= 10 ? "valor-alerta" : "valor-critico";
+              return `
+            <tr>
+              <td>${new Date(d.data).toLocaleDateString("pt-BR")}</td>
+              <td class="${statusHem}">${d.hemoglobina}</td>
+              <td>${d.plaquetas}</td>
+              <td>${d.leucocitos}</td>
+              <td>${d.hemoglobina >= 12 ? "✅ Normal" : d.hemoglobina >= 10 ? "⚠️ Alerta" : "❌ Crítico"}</td>
+            </tr>
+          `;
+            })
+            .join("")}
+        </tbody>
+      `;
+    }
+
+    function renderizarInsightsSangue(dados) {
+      const container = document.getElementById("insights-lista");
+
+      const ultimoExame = dados[dados.length - 1];
+      const primeiroExame = dados[0];
+      const mudanca = ultimoExame.hemoglobina - primeiroExame.hemoglobina;
+
+      let insights = [];
+
+      if (mudanca > 0) {
+        insights.push(`✅ Hemoglobina em <strong>melhora</strong>: ${mudanca.toFixed(1)} g/dL acima do primeiro exame`);
+      } else if (mudanca < 0) {
+        insights.push(`⚠️ Hemoglobina em <strong>queda</strong>: ${Math.abs(mudanca).toFixed(1)} g/dL abaixo do primeiro exame`);
+      }
+
+      if (ultimoExame.hemoglobina < 12) {
+        insights.push("⚠️ Valores de hemoglobina <strong>abaixo do normal</strong> - Recomenda-se avaliação");
+      }
+
+      insights.push(`📈 Tendência geral: ${mudanca > 0 ? "Melhora" : mudanca < 0 ? "Deterioração" : "Estável"}`);
+      insights.push(`📊 ${dados.length} exames analisados no período`);
+
+      container.innerHTML = insights.map((i) => `<li>${i}</li>`).join("");
+    }
+
+    function renderizarGraficoRadiografia(dados) {
+      const container = document.getElementById("grafico-barras");
+
+      container.innerHTML = `
+        <div style="width: 100%; text-align: center; padding: 2rem; color: var(--cor-texto-suave);">
+          <p>Radiografia não possui valores numéricos para comparação gráfica</p>
+          <p>Verifique a tabela abaixo para detalhes dos achados</p>
+        </div>
+      `;
+    }
+
+    function renderizarTabelaRadiografia(dados) {
+      const container = document.getElementById("tabela-comparativa");
+
+      container.innerHTML = `
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Resultado</th>
+            <th>Achados</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${dados
+            .map((d) => {
+              const statusClass = d.resultado === "Normal" ? "valor-normal" : "valor-alerta";
+              return `
+            <tr>
+              <td>${new Date(d.data).toLocaleDateString("pt-BR")}</td>
+              <td class="${statusClass}">${d.resultado}</td>
+              <td>${d.achados}</td>
+            </tr>
+          `;
+            })
+            .join("")}
+        </tbody>
+      `;
+    }
+
+    function renderizarInsightsRadiografia(dados) {
+      const container = document.getElementById("insights-lista");
+
+      const insights = [
+        `📋 Total de ${dados.length} radiografias analisadas`,
+        `${dados.filter((d) => d.resultado === "Normal").length} com resultado normal`,
+        `${dados.filter((d) => d.resultado !== "Normal").length} com achados relevantes`,
+        "🔍 Recomenda-se acompanhamento periódico",
+      ];
+
+      container.innerHTML = insights.map((i) => `<li>${i}</li>`).join("");
+    }
+  </script>
+</body>
+</html>

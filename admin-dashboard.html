@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Painel Administrativo</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .card-metrica {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      border-left: 4px solid var(--cor-primaria);
+    }
+
+    .card-metrica.consultas {
+      border-left-color: #3aa0b9;
+    }
+
+    .card-metrica.exames {
+      border-left-color: #f39c12;
+    }
+
+    .card-metrica.usuarios {
+      border-left-color: #27ae60;
+    }
+
+    .card-metrica.internacoes {
+      border-left-color: #e74c3c;
+    }
+
+    .metrica-icone {
+      font-size: 2rem;
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .metrica-titulo {
+      font-size: 0.9rem;
+      color: var(--cor-texto-suave);
+      margin: 0;
+      margin-bottom: var(--espaco-xs);
+      text-transform: uppercase;
+    }
+
+    .metrica-valor {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cor-texto);
+      margin: 0;
+    }
+
+    .metrica-mudanca {
+      font-size: 0.85rem;
+      color: var(--cor-sucesso);
+      margin-top: var(--espaco-xs);
+    }
+
+    .abas {
+      display: flex;
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-lg);
+      border-bottom: 2px solid var(--cor-borda);
+      overflow-x: auto;
+    }
+
+    .aba-botao {
+      padding: var(--espaco-md) var(--espaco-lg);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--cor-texto-suave);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all var(--transicao-rapida);
+      white-space: nowrap;
+    }
+
+    .aba-botao:hover {
+      color: var(--cor-primaria);
+    }
+
+    .aba-botao.ativo {
+      color: var(--cor-primaria);
+      border-bottom-color: var(--cor-primaria);
+    }
+
+    .secao-aba {
+      display: none;
+    }
+
+    .secao-aba.ativa {
+      display: block;
+    }
+
+    .tabela-admin {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      overflow: hidden;
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .tabela-admin th {
+      background-color: var(--cor-primaria-clara);
+      color: var(--cor-texto);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .tabela-admin td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .tabela-admin tr:hover {
+      background-color: var(--cor-fundo);
+    }
+
+    .botao-acao {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-right: var(--espaco-xs);
+      transition: all var(--transicao-rapida);
+    }
+
+    .botao-editar {
+      background-color: rgba(58, 160, 185, 0.2);
+      color: var(--cor-secundaria);
+    }
+
+    .botao-editar:hover {
+      background-color: var(--cor-secundaria);
+      color: white;
+    }
+
+    .botao-remover {
+      background-color: rgba(231, 76, 60, 0.2);
+      color: var(--cor-erro);
+    }
+
+    .botao-remover:hover {
+      background-color: var(--cor-erro);
+      color: white;
+    }
+
+    .botao-aprovar {
+      background-color: rgba(39, 174, 96, 0.2);
+      color: var(--cor-sucesso);
+    }
+
+    .botao-aprovar:hover {
+      background-color: var(--cor-sucesso);
+      color: white;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-ativo {
+      background-color: rgba(39, 174, 96, 0.2);
+      color: var(--cor-sucesso);
+    }
+
+    .status-pendente {
+      background-color: rgba(243, 156, 18, 0.2);
+      color: var(--cor-aviso);
+    }
+
+    .status-inativo {
+      background-color: rgba(231, 76, 60, 0.2);
+      color: var(--cor-erro);
+    }
+
+    .secao-admin {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .secao-admin h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .abas {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tabela-admin {
+        font-size: 0.9rem;
+      }
+
+      .tabela-admin th,
+      .tabela-admin td {
+        padding: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <h1>📊 Painel Administrativo</h1>
+      <div style="display: flex; gap: 1rem; align-items: center">
+        <button class="botao-logout-usuario">
+          <span class="icone-logout">🚪</span>
+          <span class="texto-logout">Sair</span>
+        </button>
+        <button class="botao-tema">🌙</button>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <!-- Métricas -->
+      <div class="dashboard-grid">
+        <div class="card-metrica consultas">
+          <div class="metrica-icone">📅</div>
+          <p class="metrica-titulo">Consultas Hoje</p>
+          <p class="metrica-valor">12</p>
+          <p class="metrica-mudanca">↑ 3 em relação a ontem</p>
+        </div>
+
+        <div class="card-metrica exames">
+          <div class="metrica-icone">🔬</div>
+          <p class="metrica-titulo">Exames Pendentes</p>
+          <p class="metrica-valor">8</p>
+          <p class="metrica-mudanca">Processando...</p>
+        </div>
+
+        <div class="card-metrica usuarios">
+          <div class="metrica-icone">👥</div>
+          <p class="metrica-titulo">Usuários Ativos</p>
+          <p class="metrica-valor">156</p>
+          <p class="metrica-mudanca">↑ 12 novos este mês</p>
+        </div>
+
+        <div class="card-metrica internacoes">
+          <div class="metrica-icone">🏥</div>
+          <p class="metrica-titulo">Internações Ativas</p>
+          <p class="metrica-valor">5</p>
+          <p class="metrica-mudanca">Todas estáveis</p>
+        </div>
+      </div>
+
+      <!-- Abas de Gerenciamento -->
+      <div class="secao-admin">
+        <div class="abas">
+          <button class="aba-botao ativo" onclick="mudarAba('consultas')">
+            📋 Consultas
+          </button>
+          <button class="aba-botao" onclick="mudarAba('exames')">
+            🔬 Exames
+          </button>
+          <button class="aba-botao" onclick="mudarAba('usuarios')">
+            👥 Usuários
+          </button>
+          <button class="aba-botao" onclick="mudarAba('internacoes')">
+            🏥 Internações
+          </button>
+        </div>
+
+        <!-- Aba Consultas -->
+        <div id="aba-consultas" class="secao-aba ativa">
+          <h3>Consultas Agendadas</h3>
+          <table class="tabela-admin">
+            <thead>
+              <tr>
+                <th>Proprietário</th>
+                <th>Animal</th>
+                <th>Data/Hora</th>
+                <th>Veterinário</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-consultas"></tbody>
+          </table>
+        </div>
+
+        <!-- Aba Exames -->
+        <div id="aba-exames" class="secao-aba">
+          <h3>Exames para Processar</h3>
+          <table class="tabela-admin">
+            <thead>
+              <tr>
+                <th>Animal</th>
+                <th>Tipo</th>
+                <th>Data Solicitação</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-exames"></tbody>
+          </table>
+        </div>
+
+        <!-- Aba Usuários -->
+        <div id="aba-usuarios" class="secao-aba">
+          <h3>Gerenciamento de Usuários</h3>
+          <table class="tabela-admin">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Tipo</th>
+                <th>Data Cadastro</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-usuarios"></tbody>
+          </table>
+        </div>
+
+        <!-- Aba Internações -->
+        <div id="aba-internacoes" class="secao-aba">
+          <h3>Internações Ativas</h3>
+          <table class="tabela-admin">
+            <thead>
+              <tr>
+                <th>Animal</th>
+                <th>Motivo</th>
+                <th>Data Entrada</th>
+                <th>Médico Responsável</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-internacoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de exemplo
+    const consultas = [
+      {
+        id: 1,
+        proprietario: "João Silva",
+        animal: "Fluffy",
+        dataHora: "2025-04-27 14:30",
+        veterinario: "Dr. João",
+        status: "confirmado",
+      },
+      {
+        id: 2,
+        proprietario: "Maria Santos",
+        animal: "Rex",
+        dataHora: "2025-04-27 15:00",
+        veterinario: "Dra. Maria",
+        status: "pendente",
+      },
+    ];
+
+    const exames = [
+      {
+        id: 1,
+        animal: "Fluffy",
+        tipo: "Exame de Sangue",
+        dataSolicitacao: "2025-04-25",
+        status: "processando",
+      },
+      {
+        id: 2,
+        animal: "Rex",
+        tipo: "Radiografia",
+        dataSolicitacao: "2025-04-24",
+        status: "processando",
+      },
+    ];
+
+    const usuarios = [
+      {
+        id: 1,
+        nome: "João Silva",
+        email: "joao@email.com",
+        tipo: "usuario",
+        dataCadastro: "2025-01-15",
+        status: "ativo",
+      },
+      {
+        id: 2,
+        nome: "Maria Santos",
+        email: "maria@email.com",
+        tipo: "usuario",
+        dataCadastro: "2025-02-10",
+        status: "ativo",
+      },
+    ];
+
+    const internacoes = [
+      {
+        id: 1,
+        animal: "Fluffy",
+        motivo: "Gastroenterite",
+        dataEntrada: "2025-04-20",
+        medico: "Dr. João",
+        status: "estavel",
+      },
+      {
+        id: 2,
+        animal: "Bolinha",
+        motivo: "Pós-operatório",
+        dataEntrada: "2025-04-15",
+        medico: "Dra. Ana",
+        status: "recuperacao",
+      },
+    ];
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      if (!window.petvet.usuarioManager.isAdmin()) {
+        window.location.href = "index.html";
+      }
+      renderizarDados();
+    });
+
+    function renderizarDados() {
+      // Consultas
+      document.getElementById("corpo-consultas").innerHTML = consultas
+        .map(
+          (c) => `
+        <tr>
+          <td>${c.proprietario}</td>
+          <td>${c.animal}</td>
+          <td>${c.dataHora}</td>
+          <td>${c.veterinario}</td>
+          <td><span class="status-badge status-${c.status}">${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</span></td>
+          <td>
+            <button class="botao-acao botao-editar" onclick="editarConsulta(${c.id})">Editar</button>
+            <button class="botao-acao botao-remover" onclick="deletarConsulta(${c.id})">Deletar</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+
+      // Exames
+      document.getElementById("corpo-exames").innerHTML = exames
+        .map(
+          (e) => `
+        <tr>
+          <td>${e.animal}</td>
+          <td>${e.tipo}</td>
+          <td>${new Date(e.dataSolicitacao).toLocaleDateString("pt-BR")}</td>
+          <td><span class="status-badge status-pendente">Processando</span></td>
+          <td>
+            <button class="botao-acao botao-aprovar" onclick="finalizarExame(${e.id})">Finalizar</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+
+      // Usuários
+      document.getElementById("corpo-usuarios").innerHTML = usuarios
+        .map(
+          (u) => `
+        <tr>
+          <td>${u.nome}</td>
+          <td>${u.email}</td>
+          <td>${u.tipo.charAt(0).toUpperCase() + u.tipo.slice(1)}</td>
+          <td>${new Date(u.dataCadastro).toLocaleDateString("pt-BR")}</td>
+          <td><span class="status-badge status-${u.status}">${u.status.charAt(0).toUpperCase() + u.status.slice(1)}</span></td>
+          <td>
+            <button class="botao-acao botao-editar" onclick="editarUsuario(${u.id})">Editar</button>
+            <button class="botao-acao botao-remover" onclick="deletarUsuario(${u.id})">Deletar</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+
+      // Internações
+      document.getElementById("corpo-internacoes").innerHTML = internacoes
+        .map(
+          (i) => `
+        <tr>
+          <td>${i.animal}</td>
+          <td>${i.motivo}</td>
+          <td>${new Date(i.dataEntrada).toLocaleDateString("pt-BR")}</td>
+          <td>${i.medico}</td>
+          <td><span class="status-badge status-${i.status}">${i.status.charAt(0).toUpperCase() + i.status.slice(1)}</span></td>
+          <td>
+            <button class="botao-acao botao-editar" onclick="editarInternacao(${i.id})">Editar</button>
+            <button class="botao-acao botao-remover" onclick="deletarInternacao(${i.id})">Alta</button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+    }
+
+    function mudarAba(abaId) {
+      // Ocultar todas as abas
+      document.querySelectorAll(".secao-aba").forEach((aba) => {
+        aba.classList.remove("ativa");
+      });
+
+      // Remover destaque de botões
+      document.querySelectorAll(".aba-botao").forEach((botao) => {
+        botao.classList.remove("ativo");
+      });
+
+      // Mostrar aba selecionada
+      document.getElementById(`aba-${abaId}`).classList.add("ativa");
+
+      // Destaque botão clicado
+      event.target.classList.add("ativo");
+    }
+
+    // Funções de Ação (simuladas)
+    function editarConsulta(id) {
+      alert(`Editando consulta ${id}`);
+    }
+
+    function deletarConsulta(id) {
+      if (confirm("Deseja deletar essa consulta?")) {
+        alert(`Consulta ${id} deletada`);
+      }
+    }
+
+    function finalizarExame(id) {
+      alert(`Exame ${id} finalizado`);
+    }
+
+    function editarUsuario(id) {
+      alert(`Editando usuário ${id}`);
+    }
+
+    function deletarUsuario(id) {
+      if (confirm("Deseja deletar esse usuário?")) {
+        alert(`Usuário ${id} deletado`);
+      }
+    }
+
+    function editarInternacao(id) {
+      alert(`Editando internação ${id}`);
+    }
+
+    function deletarInternacao(id) {
+      if (confirm("Deseja dar alta para essa internação?")) {
+        alert(`Internação ${id} encerrada`);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Meu Prontuário</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .seletor-animal {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .grid-animais {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .card-animal {
+      background-color: var(--cor-fundo);
+      border: 2px solid var(--cor-borda);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transicao-media);
+    }
+
+    .card-animal:hover {
+      border-color: var(--cor-primaria);
+      background-color: var(--cor-primaria-clara);
+    }
+
+    .card-animal.ativo {
+      border-color: var(--cor-primaria);
+      background-color: var(--cor-primaria-clara);
+    }
+
+    .emoji-animal {
+      font-size: 2.5rem;
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .nome-animal {
+      font-weight: 600;
+      color: var(--cor-texto);
+    }
+
+    .info-animal {
+      font-size: 0.8rem;
+      color: var(--cor-texto-suave);
+    }
+
+    .secao-prontuario {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .secao-prontuario h3 {
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-md);
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-sm);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: var(--espaco-lg);
+      padding-bottom: var(--espaco-lg);
+      border-left: 2px solid var(--cor-borda);
+    }
+
+    .timeline-item:last-child {
+      border-left: none;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -0.75rem;
+      top: 0;
+      width: 1rem;
+      height: 1rem;
+      background-color: var(--cor-primaria);
+      border: 3px solid var(--cor-cartao);
+      border-radius: 50%;
+    }
+
+    .timeline-data {
+      font-size: 0.85rem;
+      color: var(--cor-texto-suave);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-titulo {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cor-texto);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-descricao {
+      font-size: 0.9rem;
+      color: var(--cor-texto-suave);
+      line-height: 1.4;
+    }
+
+    .info-basica {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .info-item {
+      background-color: var(--cor-fundo);
+      padding: var(--espaco-md);
+      border-radius: var(--raio-borda);
+      border-left: 4px solid var(--cor-primaria);
+    }
+
+    .info-label {
+      font-size: 0.8rem;
+      color: var(--cor-texto-suave);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    .info-valor {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cor-texto);
+    }
+
+    @media (max-width: 768px) {
+      .grid-animais {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+
+      .info-basica {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Meu Prontuário</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <!-- Seletor de Animal -->
+      <div class="seletor-animal">
+        <h2>Selecione um Animal</h2>
+        <div class="grid-animais" id="grid-animais"></div>
+      </div>
+
+      <!-- Informações Básicas -->
+      <div class="secao-prontuario">
+        <h3>📋 Informações Básicas</h3>
+        <div class="info-basica" id="info-basica"></div>
+      </div>
+
+      <!-- Histórico Médico -->
+      <div class="secao-prontuario">
+        <h3>🏥 Histórico Médico</h3>
+        <div class="timeline" id="timeline-historico"></div>
+      </div>
+
+      <!-- Vacinas -->
+      <div class="secao-prontuario">
+        <h3>💉 Carteira de Vacinação</h3>
+        <div class="timeline" id="timeline-vacinas"></div>
+      </div>
+
+      <!-- Tratamentos -->
+      <div class="secao-prontuario">
+        <h3>💊 Tratamentos em Andamento</h3>
+        <div id="tratamentos-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de exemplo
+    const animais = [
+      {
+        id: 1,
+        nome: "Fluffy",
+        tipo: "Gato",
+        emoji: "🐱",
+        raca: "Persa",
+        idade: "3 anos",
+        peso: "4.5 kg",
+        dataNascimento: "2021-10-15",
+        microchip: "ABC123456",
+      },
+      {
+        id: 2,
+        nome: "Rex",
+        tipo: "Cão",
+        emoji: "🐕",
+        raca: "Labrador",
+        idade: "5 anos",
+        peso: "32 kg",
+        dataNascimento: "2019-08-20",
+        microchip: "DEF789012",
+      },
+    ];
+
+    const historicoMedico = {
+      1: [
+        {
+          data: "2025-04-15",
+          titulo: "Consulta de Rotina",
+          descricao: "Exame clínico realizado. Tudo normal. Recomendado limpeza de dentes.",
+        },
+        {
+          data: "2025-03-10",
+          titulo: "Vacinação",
+          descricao: "Dose de reforço da vacina tríplice aplicada.",
+        },
+        {
+          data: "2025-02-05",
+          titulo: "Consulta Dermatológica",
+          descricao: "Tratamento de alergia cutânea iniciado.",
+        },
+      ],
+      2: [
+        {
+          data: "2025-04-18",
+          titulo: "Radiografia",
+          descricao: "Pequeno nódulo em pulmão esquerdo detectado. Acompanhamento em 3 meses.",
+        },
+        {
+          data: "2025-03-20",
+          titulo: "Exame de Sangue",
+          descricao: "Hemograma completo. Resultados normais.",
+        },
+      ],
+    };
+
+    const vacinacoes = {
+      1: [
+        { data: "2025-02-01", vacina: "Tríplice Felina", proxima: "2026-02-01" },
+        { data: "2024-06-15", vacina: "Raiva", proxima: "2025-06-15" },
+        { data: "2024-03-10", vacina: "Leucemia Felina", proxima: "2025-03-10" },
+      ],
+      2: [
+        { data: "2025-01-15", vacina: "Tríplice Canina", proxima: "2026-01-15" },
+        { data: "2024-08-20", vacina: "Raiva", proxima: "2025-08-20" },
+      ],
+    };
+
+    const tratamentos = {
+      1: [
+        {
+          titulo: "Medicação Alergia",
+          frequencia: "2x por dia",
+          dataInicio: "2025-02-05",
+          descricao: "Anti-histamínico para controle de alergia",
+        },
+      ],
+      2: [],
+    };
+
+    let animalSelecionado = 1;
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      renderizarAnimais();
+      atualizarProntuario(1);
+    });
+
+    function renderizarAnimais() {
+      const grid = document.getElementById("grid-animais");
+      grid.innerHTML = animais
+        .map(
+          (animal) => `
+        <div class="card-animal ${animal.id === animalSelecionado ? "ativo" : ""}" 
+             onclick="selecionarAnimal(${animal.id})">
+          <div class="emoji-animal">${animal.emoji}</div>
+          <div class="nome-animal">${animal.nome}</div>
+          <div class="info-animal">${animal.raca}</div>
+        </div>
+      `
+        )
+        .join("");
+    }
+
+    function selecionarAnimal(id) {
+      animalSelecionado = id;
+      renderizarAnimais();
+      atualizarProntuario(id);
+    }
+
+    function atualizarProntuario(animalId) {
+      const animal = animais.find((a) => a.id === animalId);
+
+      // Atualizar informações básicas
+      const infoBasica = document.getElementById("info-basica");
+      infoBasica.innerHTML = `
+        <div class="info-item">
+          <div class="info-label">Raça</div>
+          <div class="info-valor">${animal.raca}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Idade</div>
+          <div class="info-valor">${animal.idade}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Peso</div>
+          <div class="info-valor">${animal.peso}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Microchip</div>
+          <div class="info-valor">${animal.microchip}</div>
+        </div>
+      `;
+
+      // Atualizar histórico médico
+      const timeline = document.getElementById("timeline-historico");
+      const historico = historicoMedico[animalId] || [];
+      timeline.innerHTML = historico
+        .map(
+          (item) => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-data">${new Date(item.data).toLocaleDateString("pt-BR")}</div>
+          <div class="timeline-titulo">${item.titulo}</div>
+          <div class="timeline-descricao">${item.descricao}</div>
+        </div>
+      `
+        )
+        .join("");
+
+      // Atualizar vacinações
+      const timelineVacinas = document.getElementById("timeline-vacinas");
+      const vacinas = vacinacoes[animalId] || [];
+      timelineVacinas.innerHTML = vacinas
+        .map(
+          (vacina) => `
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-data">Aplicada em ${new Date(vacina.data).toLocaleDateString("pt-BR")}</div>
+          <div class="timeline-titulo">${vacina.vacina}</div>
+          <div class="timeline-descricao">Próxima dose: ${new Date(vacina.proxima).toLocaleDateString("pt-BR")}</div>
+        </div>
+      `
+        )
+        .join("");
+
+      // Atualizar tratamentos
+      const tratamentosContainer = document.getElementById("tratamentos-container");
+      const trats = tratamentos[animalId] || [];
+      if (trats.length === 0) {
+        tratamentosContainer.innerHTML =
+          '<p style="color: var(--cor-texto-suave);">Nenhum tratamento ativo no momento.</p>';
+      } else {
+        tratamentosContainer.innerHTML = trats
+          .map(
+            (trat) => `
+          <div style="background-color: var(--cor-fundo); padding: 1rem; border-radius: var(--raio-borda); margin-bottom: 1rem; border-left: 4px solid var(--cor-aviso);">
+            <h4 style="margin: 0 0 0.5rem 0;">${trat.titulo}</h4>
+            <p style="margin: 0.5rem 0;"><strong>Frequência:</strong> ${trat.frequencia}</p>
+            <p style="margin: 0.5rem 0;"><strong>Desde:</strong> ${new Date(trat.dataInicio).toLocaleDateString("pt-BR")}</p>
+            <p style="margin: 0.5rem 0; color: var(--cor-texto-suave);">${trat.descricao}</p>
+          </div>
+        `
+          )
+          .join("");
+      }
+    }
+  </script>
+</body>
+</html>

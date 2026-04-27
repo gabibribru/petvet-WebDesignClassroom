@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Agendar Consulta</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .form-agendamento {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .section-form {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .section-form h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .row-dois-colunas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--espaco-md);
+    }
+
+    @media (max-width: 600px) {
+      .row-dois-colunas {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .botoes-acao {
+      display: flex;
+      gap: var(--espaco-md);
+      margin-top: var(--espaco-lg);
+    }
+
+    .botoes-acao button {
+      flex: 1;
+    }
+
+    .botoes-acao .botao-secundario {
+      background-color: var(--cor-cartao);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Agendar Consulta</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <div class="form-agendamento">
+        <form id="form-agendamento" onsubmit="handleAgendarConsulta(event)">
+          <!-- Informações do Animal -->
+          <section class="section-form">
+            <h3>📋 Informações do Animal</h3>
+
+            <div class="campo-formulario">
+              <label for="animal-nome">Nome do Animal</label>
+              <input
+                type="text"
+                id="animal-nome"
+                name="animal-nome"
+                placeholder="Ex: Fluffy"
+                required
+              />
+            </div>
+
+            <div class="row-dois-colunas">
+              <div class="campo-formulario">
+                <label for="animal-tipo">Tipo</label>
+                <select id="animal-tipo" name="animal-tipo" required>
+                  <option value="">Selecionar</option>
+                  <option value="cao">Cão</option>
+                  <option value="gato">Gato</option>
+                  <option value="ave">Ave</option>
+                  <option value="roedor">Roedor</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+
+              <div class="campo-formulario">
+                <label for="animal-idade">Idade (anos)</label>
+                <input type="number" id="animal-idade" name="animal-idade" min="0" max="50" />
+              </div>
+            </div>
+
+            <div class="campo-formulario">
+              <label for="animal-descricao">Descrição do problema</label>
+              <textarea
+                id="animal-descricao"
+                name="animal-descricao"
+                placeholder="Descreva os sintomas ou o motivo da consulta"
+                required
+              ></textarea>
+            </div>
+          </section>
+
+          <!-- Data e Hora -->
+          <section class="section-form">
+            <h3>📅 Data e Hora</h3>
+
+            <div class="row-dois-colunas">
+              <div class="campo-formulario">
+                <label for="consulta-data">Data</label>
+                <input type="date" id="consulta-data" name="consulta-data" required />
+              </div>
+
+              <div class="campo-formulario">
+                <label for="consulta-hora">Hora</label>
+                <input type="time" id="consulta-hora" name="consulta-hora" required />
+              </div>
+            </div>
+
+            <div class="campo-formulario">
+              <label for="consulta-tipo">Tipo de Consulta</label>
+              <select id="consulta-tipo" name="consulta-tipo" required>
+                <option value="">Selecionar</option>
+                <option value="rotina">Consulta de Rotina</option>
+                <option value="urgencia">Emergência</option>
+                <option value="vacinacao">Vacinação</option>
+                <option value="checkup">Check-up</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- Informações de Contato -->
+          <section class="section-form">
+            <h3>📞 Informações de Contato</h3>
+
+            <div class="campo-formulario">
+              <label for="contato-telefone">Telefone</label>
+              <input
+                type="tel"
+                id="contato-telefone"
+                name="contato-telefone"
+                placeholder="(XX) XXXXX-XXXX"
+                required
+              />
+            </div>
+
+            <div class="campo-formulario">
+              <label for="contato-email">Email</label>
+              <input
+                type="email"
+                id="contato-email"
+                name="contato-email"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+
+            <div class="campo-formulario">
+              <label for="contato-observacoes">Observações adicionais</label>
+              <textarea
+                id="contato-observacoes"
+                name="contato-observacoes"
+                placeholder="Alergias conhecidas, medicamentos, etc."
+              ></textarea>
+            </div>
+          </section>
+
+          <!-- Botões de Ação -->
+          <div class="botoes-acao">
+            <button type="button" class="botao-secundario" onclick="window.petvet.irPara('/')">
+              Cancelar
+            </button>
+            <button type="submit" class="botao-principal" id="botao-agendar">
+              Agendar Consulta
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+    });
+
+    function handleAgendarConsulta(event) {
+      event.preventDefault();
+
+      const formData = {
+        animal: {
+          nome: document.getElementById("animal-nome").value,
+          tipo: document.getElementById("animal-tipo").value,
+          idade: document.getElementById("animal-idade").value,
+          descricao: document.getElementById("animal-descricao").value,
+        },
+        consulta: {
+          data: document.getElementById("consulta-data").value,
+          hora: document.getElementById("consulta-hora").value,
+          tipo: document.getElementById("consulta-tipo").value,
+        },
+        contato: {
+          telefone: document.getElementById("contato-telefone").value,
+          email: document.getElementById("contato-email").value,
+          observacoes: document.getElementById("contato-observacoes").value,
+        },
+      };
+
+      console.log("Agendamento:", formData);
+
+      // Salvar em localStorage
+      const agendamentos = JSON.parse(localStorage.getItem("agendamentos") || "[]");
+      agendamentos.push({
+        ...formData,
+        dataAgendamento: new Date().toISOString(),
+        status: "pendente",
+      });
+      localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+
+      // Mostrar mensagem de sucesso
+      alert("Consulta agendada com sucesso!");
+      window.petvet.irPara("/");
+    }
+  </script>
+</body>
+</html>

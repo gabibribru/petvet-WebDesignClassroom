@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Encontrar Veterinário</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .filtros-busca {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .grid-filtros {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .grid-veterinarios {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--espaco-lg);
+    }
+
+    .card-veterinario {
+      background-color: var(--cor-cartao);
+      border: 1px solid var(--cor-cartao-borda);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      transition: all var(--transicao-media);
+      cursor: pointer;
+    }
+
+    .card-veterinario:hover {
+      box-shadow: 0 3px 6px var(--sombra-hover);
+      transform: translateY(-2px);
+    }
+
+    .avatar-veterinario {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--cor-primaria);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: var(--espaco-md);
+    }
+
+    .info-veterinario h3 {
+      margin-bottom: var(--espaco-xs);
+    }
+
+    .especialidade {
+      display: inline-block;
+      background-color: rgba(46, 158, 91, 0.2);
+      color: var(--cor-primaria);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-right: var(--espaco-xs);
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .avaliacao {
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-xs);
+      margin: var(--espaco-sm) 0;
+      font-size: 0.9rem;
+    }
+
+    .botao-contatar {
+      width: 100%;
+      margin-top: var(--espaco-md);
+    }
+
+    .sem-resultados {
+      text-align: center;
+      padding: var(--espaco-xl);
+      color: var(--cor-texto-suave);
+    }
+
+    .sem-resultados-icone {
+      font-size: 3rem;
+      margin-bottom: var(--espaco-md);
+    }
+
+    @media (max-width: 768px) {
+      .grid-veterinarios {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Encontrar Veterinário</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <!-- Filtros de Busca -->
+      <div class="filtros-busca">
+        <h2>🔍 Filtrar Busca</h2>
+        <div class="grid-filtros">
+          <div class="campo-formulario">
+            <label for="filtro-especialidade">Especialidade</label>
+            <select id="filtro-especialidade">
+              <option value="">Todas</option>
+              <option value="clinica-geral">Clínica Geral</option>
+              <option value="cirurgia">Cirurgia</option>
+              <option value="ortopedia">Ortopedia</option>
+              <option value="dermatologia">Dermatologia</option>
+            </select>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="filtro-disponibilidade">Disponibilidade</label>
+            <select id="filtro-disponibilidade">
+              <option value="">Qualquer horário</option>
+              <option value="hoje">Hoje</option>
+              <option value="esta-semana">Esta semana</option>
+              <option value="este-mes">Este mês</option>
+            </select>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="filtro-avaliacao">Avaliação Mínima</label>
+            <select id="filtro-avaliacao">
+              <option value="">Qualquer avaliação</option>
+              <option value="3">3 estrelas ou mais</option>
+              <option value="4">4 estrelas ou mais</option>
+              <option value="5">5 estrelas</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="botao-secundario" onclick="filtrarVeterinarios()" style="width: 100%">
+          Buscar
+        </button>
+      </div>
+
+      <!-- Grid de Veterinários -->
+      <div id="veterinarios-container" class="grid-veterinarios"></div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de exemplo
+    const veterinarios = [
+      {
+        id: 1,
+        nome: "Dr. João Silva",
+        especialidades: ["Clínica Geral", "Cirurgia"],
+        avaliacao: 4.8,
+        avaliacoes: 45,
+        foto: "🧑‍⚕️",
+        horarioDisponivel: "Hoje às 14:00",
+        preco: "R$ 150",
+      },
+      {
+        id: 2,
+        nome: "Dra. Maria Santos",
+        especialidades: ["Dermatologia", "Clínica Geral"],
+        avaliacao: 4.9,
+        avaliacoes: 67,
+        foto: "👩‍⚕️",
+        horarioDisponivel: "Amanhã às 10:00",
+        preco: "R$ 120",
+      },
+      {
+        id: 3,
+        nome: "Dr. Carlos Oliveira",
+        especialidades: ["Ortopedia", "Cirurgia"],
+        avaliacao: 4.7,
+        avaliacoes: 38,
+        foto: "🧑‍⚕️",
+        horarioDisponivel: "Terça às 15:00",
+        preco: "R$ 180",
+      },
+      {
+        id: 4,
+        nome: "Dra. Ana Costa",
+        especialidades: ["Clínica Geral"],
+        avaliacao: 4.6,
+        avaliacoes: 52,
+        foto: "👩‍⚕️",
+        horarioDisponivel: "Hoje às 16:30",
+        preco: "R$ 100",
+      },
+    ];
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      renderizarVeterinarios(veterinarios);
+    });
+
+    function renderizarVeterinarios(lista) {
+      const container = document.getElementById("veterinarios-container");
+
+      if (lista.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--cor-texto-suave);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">😔</div>
+            <h3>Nenhum veterinário encontrado</h3>
+            <p>Tente ajustar seus filtros de busca</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = lista
+        .map(
+          (vet) => `
+        <div class="card-veterinario" onclick="selecionarVeterinario(${vet.id})">
+          <div class="avatar-veterinario">${vet.foto}</div>
+          <div class="info-veterinario">
+            <h3>${vet.nome}</h3>
+            <div>
+              ${vet.especialidades.map((e) => `<span class="especialidade">${e}</span>`).join("")}
+            </div>
+            <div class="avaliacao">
+              <span>⭐ ${vet.avaliacao}</span>
+              <span style="color: var(--cor-texto-suave);">(${vet.avaliacoes})</span>
+            </div>
+            <p style="margin: 0.5rem 0; color: var(--cor-texto-suave);">
+              ${vet.horarioDisponivel}
+            </p>
+            <p style="margin: 0.5rem 0; font-weight: 600; color: var(--cor-primaria);">
+              ${vet.preco}
+            </p>
+          </div>
+          <button class="botao-principal botao-contatar">Agendar com ${vet.nome.split(" ")[0]}</button>
+        </div>
+      `
+        )
+        .join("");
+    }
+
+    function filtrarVeterinarios() {
+      // Implementar lógica de filtro
+      renderizarVeterinarios(veterinarios);
+    }
+
+    function selecionarVeterinario(id) {
+      const vet = veterinarios.find((v) => v.id === id);
+      if (vet) {
+        alert(`Agendando com ${vet.nome}...`);
+        // Aqui você poderia redirecionar para uma página de confirmação
+      }
+    }
+  </script>
+</body>
+</html>

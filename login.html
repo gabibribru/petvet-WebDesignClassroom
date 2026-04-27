@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Login</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <style>
+    /* Estilos específicos da página de login */
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="pagina-login">
+      <div class="container-login fade-in">
+        <div class="logo-container">
+          <div class="logo-clinica">
+            <span class="icone-logo">🐾</span>
+            <h1>PetVet</h1>
+          </div>
+          <p class="slogan">Cuidando com carinho do seu melhor amigo</p>
+        </div>
+
+        <div class="formulario-container">
+          <h2>Acesse sua conta</h2>
+
+          <div id="mensagem-erro" class="mensagem-erro hidden"></div>
+          <div id="mensagem-sucesso" class="mensagem-sucesso hidden"></div>
+
+          <form id="form-login" onsubmit="handleLogin(event)">
+            <div class="campo-formulario">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Seu email"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="campo-formulario">
+              <label for="senha">Senha</label>
+              <input
+                type="password"
+                id="senha"
+                name="senha"
+                placeholder="Sua senha"
+                required
+                autocomplete="current-password"
+              />
+              <a href="#" class="link-esqueci-senha">Esqueci minha senha</a>
+            </div>
+
+            <button type="submit" class="botao-login" id="botao-enviar">
+              Entrar
+            </button>
+          </form>
+
+          <div class="opcoes-adicionais">
+            <p>
+              Não tem uma conta?
+              <a href="#" class="link-cadastro">Cadastre-se</a>
+            </p>
+          </div>
+
+          <div class="credenciais-teste">
+            <p><strong>Credenciais de Teste:</strong></p>
+            <p>
+              <strong>Admin:</strong> admin@petvet.com / admin123
+            </p>
+            <p>
+              <strong>Usuário:</strong> usuario@teste.com / 123456
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <script>
+  function handleLogin(event) {
+    event.preventDefault(); // evita reload da página
+
+    // Sempre redireciona para o index.html
+    window.location.href = "index.html";
+  }
+</script>
+</body>
+</html>

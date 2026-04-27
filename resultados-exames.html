@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Resultados de Exames</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .filtro-exames {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .tabela-exames {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .tabela-exames th {
+      background-color: var(--cor-primaria-clara);
+      color: var(--cor-texto);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--cor-primaria);
+    }
+
+    .tabela-exames td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .tabela-exames tr:hover {
+      background-color: var(--cor-cartao);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-concluido {
+      background-color: rgba(39, 174, 96, 0.2);
+      color: var(--cor-sucesso);
+    }
+
+    .status-pendente {
+      background-color: rgba(243, 156, 18, 0.2);
+      color: var(--cor-aviso);
+    }
+
+    .status-processando {
+      background-color: rgba(58, 160, 185, 0.2);
+      color: var(--cor-secundaria);
+    }
+
+    .botao-ver-detalhes {
+      background-color: var(--cor-primaria);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--raio-borda);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color var(--transicao-rapida);
+    }
+
+    .botao-ver-detalhes:hover {
+      background-color: var(--cor-primaria-hover);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.visivel {
+      display: flex;
+    }
+
+    .modal-conteudo {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 4px 12px var(--sombra-hover);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .botao-fechar-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--cor-texto-suave);
+    }
+
+    .sem-exames {
+      text-align: center;
+      padding: 2rem;
+      color: var(--cor-texto-suave);
+    }
+
+    .sem-exames-icone {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .tabela-exames {
+        font-size: 0.9rem;
+      }
+
+      .tabela-exames th,
+      .tabela-exames td {
+        padding: 0.7rem;
+      }
+
+      .botao-ver-detalhes {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Resultados de Exames</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <!-- Filtro -->
+      <div class="filtro-exames">
+        <h2>🔍 Filtrar Exames</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div class="campo-formulario">
+            <label for="filtro-animal">Animal</label>
+            <select id="filtro-animal">
+              <option value="">Todos os animais</option>
+              <option value="fluffy">Fluffy (Gato)</option>
+              <option value="rex">Rex (Cão)</option>
+            </select>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="filtro-status">Status</label>
+            <select id="filtro-status">
+              <option value="">Todos</option>
+              <option value="concluido">Concluído</option>
+              <option value="pendente">Pendente</option>
+              <option value="processando">Processando</option>
+            </select>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="filtro-tipo">Tipo de Exame</label>
+            <select id="filtro-tipo">
+              <option value="">Todos os tipos</option>
+              <option value="sangue">Exame de Sangue</option>
+              <option value="radiografia">Radiografia</option>
+              <option value="ultrassom">Ultrassom</option>
+            </select>
+          </div>
+        </div>
+        <button class="botao-secundario" onclick="filtrarExames()" style="width: 100%; margin-top: 1rem">
+          Filtrar
+        </button>
+      </div>
+
+      <!-- Tabela de Exames -->
+      <div id="exames-container"></div>
+    </main>
+  </div>
+
+  <!-- Modal de Detalhes -->
+  <div id="modal-detalhes" class="modal">
+    <div class="modal-conteudo">
+      <div class="modal-header">
+        <h2>Detalhes do Exame</h2>
+        <button class="botao-fechar-modal" onclick="fecharModal()">✕</button>
+      </div>
+      <div id="modal-corpo"></div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de exemplo
+    const exames = [
+      {
+        id: 1,
+        animal: "Fluffy",
+        tipo: "Exame de Sangue",
+        data: "2025-04-15",
+        status: "concluido",
+        medico: "Dr. João Silva",
+        resultado: "Normal",
+        detalhes: {
+          hemoglobina: "13.5 g/dL",
+          plaquetas: "250 mil/μL",
+          leucocitos: "7.5 mil/μL",
+          observacoes: "Tudo dentro dos parâmetros normais",
+        },
+      },
+      {
+        id: 2,
+        animal: "Rex",
+        tipo: "Radiografia",
+        data: "2025-04-18",
+        status: "concluido",
+        medico: "Dra. Maria Santos",
+        resultado: "Normal com achados",
+        detalhes: {
+          localizacao: "Tórax",
+          achados: "Pequeno nódulo em pulmão esquerdo",
+          recomendacao: "Acompanhamento em 3 meses",
+          observacoes: "Requere avaliação clínica complementar",
+        },
+      },
+      {
+        id: 3,
+        animal: "Fluffy",
+        tipo: "Ultrassom",
+        data: "2025-04-20",
+        status: "processando",
+        medico: "Dr. Carlos Oliveira",
+        resultado: "Pendente",
+        detalhes: {
+          localizacao: "Abdômen",
+          status: "Processando...",
+          dataEstimada: "2025-04-22",
+        },
+      },
+      {
+        id: 4,
+        animal: "Rex",
+        tipo: "Exame de Sangue",
+        data: "2025-04-19",
+        status: "pendente",
+        medico: "Dra. Ana Costa",
+        resultado: "Pendente",
+        detalhes: {
+          status: "Aguardando análise",
+          dataEstimada: "2025-04-21",
+        },
+      },
+    ];
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      renderizarExames(exames);
+    });
+
+    function renderizarExames(lista) {
+      const container = document.getElementById("exames-container");
+
+      if (lista.length === 0) {
+        container.innerHTML = `
+          <div class="sem-exames">
+            <div class="sem-exames-icone">📋</div>
+            <h3>Nenhum exame encontrado</h3>
+            <p>Você não possui exames ainda. Solicite um novo exame ao seu veterinário.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const tabela = `
+        <table class="tabela-exames">
+          <thead>
+            <tr>
+              <th>Animal</th>
+              <th>Tipo de Exame</th>
+              <th>Data</th>
+              <th>Médico</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista
+              .map(
+                (exame) => `
+              <tr>
+                <td><strong>${exame.animal}</strong></td>
+                <td>${exame.tipo}</td>
+                <td>${new Date(exame.data).toLocaleDateString("pt-BR")}</td>
+                <td>${exame.medico}</td>
+                <td>
+                  <span class="status-badge status-${exame.status}">
+                    ${exame.status.charAt(0).toUpperCase() + exame.status.slice(1)}
+                  </span>
+                </td>
+                <td>
+                  <button class="botao-ver-detalhes" onclick="abrirDetalhes(${exame.id})">
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = tabela;
+    }
+
+    function abrirDetalhes(id) {
+      const exame = exames.find((e) => e.id === id);
+      if (!exame) return;
+
+      const modal = document.getElementById("modal-detalhes");
+      const corpo = document.getElementById("modal-corpo");
+
+      let detalheHtml = `
+        <div style="margin-bottom: 1rem;">
+          <p><strong>Animal:</strong> ${exame.animal}</p>
+          <p><strong>Tipo:</strong> ${exame.tipo}</p>
+          <p><strong>Data:</strong> ${new Date(exame.data).toLocaleDateString("pt-BR")}</p>
+          <p><strong>Médico:</strong> ${exame.medico}</p>
+          <p><strong>Status:</strong> <span class="status-badge status-${exame.status}">${exame.status.charAt(0).toUpperCase() + exame.status.slice(1)}</span></p>
+        </div>
+
+        <div style="border-top: 1px solid var(--cor-borda); padding-top: 1rem;">
+          <h3 style="margin-bottom: 1rem;">Resultados</h3>
+      `;
+
+      Object.entries(exame.detalhes).forEach(([key, value]) => {
+        const label = key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
+        detalheHtml += `<p><strong>${label}:</strong> ${value}</p>`;
+      });
+
+      detalheHtml += `
+        </div>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+          <button class="botao-principal" style="flex: 1; cursor: pointer;" onclick="compartilharExame(${exame.id})">
+            📤 Compartilhar
+          </button>
+          <button class="botao-secundario" style="flex: 1; cursor: pointer;" onclick="downloadExame(${exame.id})">
+            💾 Download
+          </button>
+        </div>
+      `;
+
+      corpo.innerHTML = detalheHtml;
+      modal.classList.add("visivel");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-detalhes").classList.remove("visivel");
+    }
+
+    function filtrarExames() {
+      renderizarExames(exames);
+    }
+
+    function compartilharExame(id) {
+      alert("Exame compartilhado com sucesso!");
+    }
+
+    function downloadExame(id) {
+      alert("Baixando exame...");
+    }
+
+    // Fechar modal ao clicar fora dele
+    document.getElementById("modal-detalhes").addEventListener("click", function (e) {
+      if (e.target === this) {
+        fecharModal();
+      }
+    });
+  </script>
+</body>
+</html>

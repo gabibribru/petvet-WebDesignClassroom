@@ -1,0 +1,798 @@
+/* ============================================
+   PetVet - HTML/CSS3 Stylesheet
+   ============================================ */
+
+/* Importação da fonte Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* Reset e Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Tema Claro (Padrão)
+   ============================================ */
+:root {
+  /* Cores do tema claro */
+  --cor-fundo: #ffffff;
+  --cor-texto: #333333;
+  --cor-primaria: #2e9e5b;
+  --cor-primaria-hover: #25844c;
+  --cor-primaria-clara: #e6f4ed;
+  --cor-secundaria: #3aa0b9;
+  --cor-secundaria-hover: #2d8094;
+  --cor-borda: #e0e0e0;
+  --cor-cartao: #f8f9fa;
+  --cor-cartao-borda: #e9ecef;
+  --cor-destaque: #f0f9f6;
+  --cor-erro: #e74c3c;
+  --cor-aviso: #f39c12;
+  --cor-sucesso: #27ae60;
+  --cor-texto-suave: #6c757d;
+  --sombra: rgba(0, 0, 0, 0.05);
+  --sombra-hover: rgba(0, 0, 0, 0.1);
+
+  /* Espaçamento e tamanhos */
+  --raio-borda: 12px;
+  --espaco-xs: 0.25rem;
+  --espaco-sm: 0.5rem;
+  --espaco-md: 1rem;
+  --espaco-lg: 1.5rem;
+  --espaco-xl: 2rem;
+
+  /* Transições */
+  --transicao-rapida: 0.2s ease;
+  --transicao-media: 0.3s ease;
+}
+
+/* ============================================
+   Tema Escuro
+   ============================================ */
+body.escuro {
+  --cor-fundo: #121212;
+  --cor-texto: #f8f9fa;
+  --cor-primaria: #3eb370;
+  --cor-primaria-hover: #4cc985;
+  --cor-primaria-clara: #1a3a2a;
+  --cor-secundaria: #4db8d5;
+  --cor-secundaria-hover: #5fc5e0;
+  --cor-borda: #333333;
+  --cor-cartao: #1e1e1e;
+  --cor-cartao-borda: #333333;
+  --cor-destaque: #1a3a2a;
+  --cor-erro: #e74c3c;
+  --cor-aviso: #f39c12;
+  --cor-sucesso: #27ae60;
+  --cor-texto-suave: #adb5bd;
+  --sombra: rgba(0, 0, 0, 0.2);
+  --sombra-hover: rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   Estilos Base
+   ============================================ */
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  transition: background-color var(--transicao-media),
+              color var(--transicao-media);
+  line-height: 1.6;
+}
+
+/* ============================================
+   Container Principal
+   ============================================ */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: sticky;
+}
+
+/* ============================================
+   Cabeçalho Comum
+   ============================================ */
+.cabecalho,
+.cabecalho-inicial {
+  display: flex;
+  align-items: center;
+  padding: var(--espaco-md);
+  border-bottom: 1px solid var(--cor-borda);
+  background-color: var(--cor-fundo);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: var(--espaco-md);
+}
+
+.cabecalho-inicial {
+  justify-content: space-between;
+}
+
+.botao-voltar {
+  background: none;
+  border: none;
+  color: var(--cor-primaria);
+  font-size: 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: transform var(--transicao-rapida);
+}
+
+.botao-voltar:hover {
+  transform: scale(1.1);
+}
+
+.seta-voltar {
+  font-size: 1.8rem;
+}
+
+.titulo-clinica {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  flex: 1;
+}
+
+/* ============================================
+   Tipografia
+   ============================================ */
+h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  margin-bottom: var(--espaco-md);
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: var(--espaco-lg);
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--cor-texto);
+  margin-bottom: var(--espaco-sm);
+}
+
+p {
+  font-size: 0.95rem;
+  color: var(--cor-texto-suave);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Botões
+   ============================================ */
+button,
+.botao {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--raio-borda);
+  cursor: pointer;
+  transition: all var(--transicao-rapida);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-sm);
+}
+
+button:active,
+.botao:active {
+  transform: scale(0.98);
+}
+
+button:disabled,
+.botao:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botão Primário */
+.botao-principal,
+.botao-primary {
+  background-color: var(--cor-primaria);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.botao-principal:hover:not(:disabled),
+.botao-primary:hover:not(:disabled) {
+  background-color: var(--cor-primaria-hover);
+}
+
+/* Botão Secundário */
+.botao-secundario,
+.botao-secondary {
+  background-color: var(--cor-cartao);
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+  padding: 0.75rem 1.5rem;
+}
+
+.botao-secundario:hover:not(:disabled),
+.botao-secondary:hover:not(:disabled) {
+  background-color: var(--cor-borda);
+}
+
+/* Botão Tema */
+.botao-tema,
+.botao-tema-inicial {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transicao-rapida);
+}
+
+.botao-tema:hover,
+.botao-tema-inicial:hover {
+  background-color: var(--cor-cartao);
+}
+
+/* Botão Logout */
+.botao-logout-usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  color: var(--cor-texto);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transicao-rapida);
+}
+
+.botao-logout-usuario:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--cor-erro);
+  border-color: var(--cor-erro);
+}
+
+.icone-logout {
+  font-size: 1.1rem;
+}
+
+.texto-logout {
+  font-weight: 500;
+}
+
+/* ============================================
+   Conteúdo Principal
+   ============================================ */
+.conteudo-principal,
+main {
+  flex: 1;
+  padding: var(--espaco-md);
+  width: 100%;
+  max-width: 100%;
+
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+.card-destaque {
+  background-color: rgba(46, 158, 91, 0.1);
+  border-radius: var(--raio-borda);
+  padding: var(--espaco-lg);
+  box-shadow: 0 2px 4px var(--sombra);
+  transition: all var(--transicao-media);
+  
+}
+
+.card-destaque:hover {
+  box-shadow: 0 4px 8px var(--sombra-hover);
+  transform: translateY(-2px);
+}
+
+.card-servico {
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-cartao-borda);
+  border-radius: var(--raio-borda);
+  padding: var(--espaco-lg);
+  box-shadow: 0 1px 3px var(--sombra);
+  transition: all var(--transicao-media);
+  cursor: pointer;
+}
+
+.card-servico:hover {
+  box-shadow: 0 3px 6px var(--sombra-hover);
+  transform: translateY(-2px);
+}
+
+.card-servico.card-secundario {
+  border-left: 4px solid var(--cor-secundaria);
+}
+
+.titulo-card {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--cor-primaria);
+  margin-bottom: var(--espaco-sm);
+}
+
+.icone-card {
+  font-size: 1.5rem;
+}
+
+.titulo-servico {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: var(--espaco-sm);
+  color: var(--cor-texto);
+}
+
+.descricao-card,
+.descricao-servico {
+  font-size: 0.9rem;
+  color: var(--cor-texto-suave);
+  margin-bottom: var(--espaco-md);
+  line-height: 1.4;
+}
+
+/* Grade de Serviços */
+.grade-servicos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+.coluna-servicos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+@media (min-width: 768px) {
+  .grade-servicos {
+    flex-direction: row;
+    gap: var(--espaco-lg);
+  }
+
+  .coluna-servicos {
+    flex: 1;
+  }
+}
+
+/* ============================================
+   Formulários
+   ============================================ */
+.formulario-container,
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+.campo-formulario label {
+  font-size: 0.9rem;
+  color: var(--cor-texto);
+  font-weight: 500;
+}
+
+.campo-formulario input,
+.campo-formulario textarea,
+.campo-formulario select {
+  padding: 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-borda);
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  transition: border-color var(--transicao-rapida);
+}
+
+.campo-formulario input:focus,
+.campo-formulario textarea:focus,
+.campo-formulario select:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(46, 158, 91, 0.1);
+}
+
+.campo-formulario textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.link-esqueci-senha {
+  display: block;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--cor-primaria);
+  text-decoration: none;
+  margin-top: var(--espaco-xs);
+  transition: color var(--transicao-rapida);
+}
+
+.link-esqueci-senha:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Página de Login
+   ============================================ */
+.pagina-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--espaco-md);
+  background-color: var(--cor-fundo);
+}
+
+.container-login {
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--cor-cartao);
+  border-radius: var(--raio-borda);
+  box-shadow: 0 4px 12px var(--sombra);
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-container {
+  background-color: var(--cor-primaria);
+  color: white;
+  padding: 2rem var(--espaco-md);
+  text-align: center;
+}
+
+.logo-clinica {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--espaco-sm);
+  gap: var(--espaco-sm);
+}
+
+.icone-logo {
+  font-size: 2rem;
+}
+
+.logo-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.slogan {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0;
+  color: white;
+}
+
+.formulario-container {
+  padding: 2rem var(--espaco-md);
+}
+
+.formulario-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--espaco-lg);
+  text-align: center;
+  color: var(--cor-texto);
+}
+
+.mensagem-erro {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--cor-erro);
+  padding: 0.75rem;
+  border-radius: var(--raio-borda);
+  margin-bottom: var(--espaco-md);
+  font-size: 0.9rem;
+  text-align: center;
+  border-left: 4px solid var(--cor-erro);
+  animation: slideDown 0.3s ease;
+}
+
+.mensagem-sucesso {
+  background-color: rgba(39, 174, 96, 0.1);
+  color: var(--cor-sucesso);
+  padding: 0.75rem;
+  border-radius: var(--raio-borda);
+  margin-bottom: var(--espaco-md);
+  font-size: 0.9rem;
+  text-align: center;
+  border-left: 4px solid var(--cor-sucesso);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.botao-login {
+  background-color: var(--cor-primaria);
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transicao-rapida);
+  padding: 0.75rem;
+  margin-top: var(--espaco-md);
+}
+
+.botao-login:hover:not(:disabled) {
+  background-color: var(--cor-primaria-hover);
+}
+
+.botao-login:disabled {
+  background-color: var(--cor-texto-suave);
+  cursor: not-allowed;
+}
+
+.opcoes-adicionais {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--cor-texto-suave);
+  margin-top: var(--espaco-lg);
+}
+
+.link-cadastro {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transicao-rapida);
+}
+
+.link-cadastro:hover {
+  text-decoration: underline;
+}
+
+.credenciais-teste {
+  margin-top: var(--espaco-lg);
+  padding-top: var(--espaco-md);
+  border-top: 1px solid var(--cor-borda);
+  font-size: 0.8rem;
+  color: var(--cor-texto-suave);
+}
+
+.credenciais-teste p {
+  margin: var(--espaco-xs) 0;
+}
+
+.credenciais-teste strong {
+  color: var(--cor-texto);
+}
+
+/* ============================================
+   Links
+   ============================================ */
+a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  transition: color var(--transicao-rapida);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Responsividade
+   ============================================ */
+@media (max-width: 768px) {
+  .texto-logout {
+    display: none;
+  }
+
+  .botao-logout-usuario {
+    padding: var(--espaco-sm);
+  }
+
+  .icone-logout {
+    margin: 0;
+  }
+
+  .titulo-clinica {
+    font-size: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .container-login {
+    max-width: 100%;
+  }
+
+  .conteudo-principal,
+  main {
+    padding: var(--espaco-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --espaco-md: 0.75rem;
+    --espaco-lg: 1.25rem;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .botao-principal,
+  .botao-primary {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+  }
+
+  .card-destaque,
+  .card-servico {
+    padding: 1rem;
+  }
+
+  .titulo-card {
+    font-size: 1.1rem;
+  }
+}
+
+/* ============================================
+   Animações Gerais
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.3s ease;
+}
+
+/* ============================================
+   Utilitários
+   ============================================ */
+.hidden {
+  display: none !important;
+}
+
+.visivel {
+  display: block;
+}
+
+.texto-centro {
+  text-align: center;
+}
+
+.flex-centro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-sm {
+  gap: var(--espaco-sm);
+}
+
+.gap-md {
+  gap: var(--espaco-md);
+}
+
+.gap-lg {
+  gap: var(--espaco-lg);
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.mt-sm {
+  margin-top: var(--espaco-sm);
+}
+
+.mt-md {
+  margin-top: var(--espaco-md);
+}
+
+.mt-lg {
+  margin-top: var(--espaco-lg);
+}
+
+.mb-sm {
+  margin-bottom: var(--espaco-sm);
+}
+
+.mb-md {
+  margin-bottom: var(--espaco-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--espaco-lg);
+}
+
+.p-sm {
+  padding: var(--espaco-sm);
+}
+
+.p-md {
+  padding: var(--espaco-md);
+}
+
+.p-lg {
+  padding: var(--espaco-lg);
+}

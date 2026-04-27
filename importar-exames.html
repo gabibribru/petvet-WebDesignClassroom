@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Importar Exames</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .container-importacao {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .area-upload {
+      background-color: var(--cor-cartao);
+      border: 2px dashed var(--cor-borda);
+      border-radius: var(--raio-borda);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transicao-media);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .area-upload:hover {
+      border-color: var(--cor-primaria);
+      background-color: var(--cor-primaria-clara);
+    }
+
+    .area-upload.ativo {
+      border-color: var(--cor-primaria);
+      background-color: var(--cor-primaria-clara);
+    }
+
+    .icone-upload {
+      font-size: 3rem;
+      margin-bottom: var(--espaco-md);
+    }
+
+    .texto-upload {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .texto-upload-pequeno {
+      font-size: 0.9rem;
+      color: var(--cor-texto-suave);
+      margin: 0;
+    }
+
+    .input-arquivo {
+      display: none;
+    }
+
+    .secao-importacao {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .secao-importacao h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .lista-arquivos {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .item-arquivo {
+      background-color: var(--cor-fundo);
+      padding: var(--espaco-md);
+      border-radius: var(--raio-borda);
+      margin-bottom: var(--espaco-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 4px solid var(--cor-primaria);
+    }
+
+    .info-arquivo {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-md);
+    }
+
+    .icone-arquivo {
+      font-size: 1.5rem;
+    }
+
+    .detalhes-arquivo {
+      flex: 1;
+    }
+
+    .nome-arquivo {
+      font-weight: 600;
+      color: var(--cor-texto);
+      margin-bottom: 0.25rem;
+    }
+
+    .tamanho-arquivo {
+      font-size: 0.8rem;
+      color: var(--cor-texto-suave);
+    }
+
+    .barra-progresso {
+      height: 6px;
+      background-color: var(--cor-borda);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progresso {
+      height: 100%;
+      background-color: var(--cor-primaria);
+      transition: width 0.3s ease;
+    }
+
+    .botao-remover {
+      background: none;
+      border: none;
+      color: var(--cor-erro);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: color var(--transicao-rapida);
+    }
+
+    .botao-remover:hover {
+      color: var(--cor-erro);
+      transform: scale(1.1);
+    }
+
+    .status-upload {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .status-sucesso {
+      background-color: rgba(39, 174, 96, 0.1);
+      color: var(--cor-sucesso);
+    }
+
+    .status-erro {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: var(--cor-erro);
+    }
+
+    .status-processando {
+      background-color: rgba(58, 160, 185, 0.1);
+      color: var(--cor-secundaria);
+    }
+
+    .instrucoes {
+      background-color: var(--cor-primaria-clara);
+      border-left: 4px solid var(--cor-primaria);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .instrucoes h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+    }
+
+    .instrucoes ul {
+      margin: var(--espaco-md) 0;
+      padding-left: 1.5rem;
+    }
+
+    .instrucoes li {
+      margin-bottom: 0.5rem;
+      color: var(--cor-texto);
+    }
+
+    .formulario-exame {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .formulario-exame h3 {
+      margin-top: 0;
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .grid-campo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--espaco-md);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Importar Exames</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <div class="container-importacao">
+        <!-- Instruções -->
+        <div class="instrucoes">
+          <h3>📖 Como Importar Exames</h3>
+          <ul>
+            <li>Selecione o arquivo PDF ou imagem do resultado do exame</li>
+            <li>Preenchimento dos dados básicos do exame</li>
+            <li>Você receberá uma notificação quando o processamento terminar</li>
+            <li>Os exames ficarão disponíveis na seção de "Resultados de Exames"</li>
+          </ul>
+        </div>
+
+        <!-- Área de Upload -->
+        <div class="area-upload" id="area-upload" onclick="document.getElementById('input-arquivo').click()">
+          <div class="icone-upload">📁</div>
+          <p class="texto-upload"><strong>Clique ou arraste arquivos aqui</strong></p>
+          <p class="texto-upload-pequeno">Formatos aceitos: PDF, JPG, PNG (máximo 10MB por arquivo)</p>
+          <input type="file" id="input-arquivo" class="input-arquivo" multiple accept=".pdf,.jpg,.jpeg,.png" />
+        </div>
+
+        <!-- Formulário de Exame -->
+        <form id="form-exame" class="formulario-exame" onsubmit="handleImportarExame(event)">
+          <h3>📋 Informações do Exame</h3>
+
+          <div class="grid-campo">
+            <div class="campo-formulario">
+              <label for="animal">Animal</label>
+              <select id="animal" name="animal" required>
+                <option value="">Selecionar animal</option>
+                <option value="fluffy">Fluffy (Gato)</option>
+                <option value="rex">Rex (Cão)</option>
+              </select>
+            </div>
+
+            <div class="campo-formulario">
+              <label for="tipo-exame">Tipo de Exame</label>
+              <select id="tipo-exame" name="tipo-exame" required>
+                <option value="">Selecionar tipo</option>
+                <option value="sangue">Exame de Sangue</option>
+                <option value="radiografia">Radiografia</option>
+                <option value="ultrassom">Ultrassom</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="data-exame">Data do Exame</label>
+            <input type="date" id="data-exame" name="data-exame" required />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="clinica">Clínica/Laboratório</label>
+            <input
+              type="text"
+              id="clinica"
+              name="clinica"
+              placeholder="Nome da clínica ou laboratório"
+              required
+            />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="medico">Médico Veterinário (opcional)</label>
+            <input
+              type="text"
+              id="medico"
+              name="medico"
+              placeholder="Nome do veterinário responsável"
+            />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="observacoes">Observações (opcional)</label>
+            <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais sobre o exame"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem">
+            <button type="button" class="botao-secundario" onclick="limparForm()" style="flex: 1">
+              Limpar
+            </button>
+            <button type="submit" class="botao-principal" style="flex: 1" id="botao-importar">
+              Importar Exame
+            </button>
+          </div>
+        </form>
+
+        <!-- Lista de Arquivos Carregados -->
+        <div class="secao-importacao" id="secao-arquivos" style="display: none">
+          <h3>📤 Arquivos Selecionados</h3>
+          <ul class="lista-arquivos" id="lista-arquivos"></ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    let arquivos = [];
+    const areaUpload = document.getElementById("area-upload");
+    const inputArquivo = document.getElementById("input-arquivo");
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+
+      // Setup drag and drop
+      areaUpload.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        areaUpload.classList.add("ativo");
+      });
+
+      areaUpload.addEventListener("dragleave", () => {
+        areaUpload.classList.remove("ativo");
+      });
+
+      areaUpload.addEventListener("drop", (e) => {
+        e.preventDefault();
+        areaUpload.classList.remove("ativo");
+        handleArquivos(e.dataTransfer.files);
+      });
+
+      inputArquivo.addEventListener("change", (e) => {
+        handleArquivos(e.target.files);
+      });
+    });
+
+    function handleArquivos(files) {
+      arquivos = Array.from(files);
+      renderizarArquivos();
+    }
+
+    function renderizarArquivos() {
+      const secao = document.getElementById("secao-arquivos");
+      const lista = document.getElementById("lista-arquivos");
+
+      if (arquivos.length === 0) {
+        secao.style.display = "none";
+        return;
+      }
+
+      secao.style.display = "block";
+      lista.innerHTML = arquivos
+        .map(
+          (arquivo, index) => `
+        <li class="item-arquivo">
+          <div class="info-arquivo">
+            <div class="icone-arquivo">📄</div>
+            <div class="detalhes-arquivo">
+              <div class="nome-arquivo">${arquivo.name}</div>
+              <div class="tamanho-arquivo">${(arquivo.size / 1024).toFixed(2)} KB</div>
+              <div class="barra-progresso">
+                <div class="progresso" style="width: 100%"></div>
+              </div>
+              <div class="status-upload status-sucesso">Pronto para envio</div>
+            </div>
+          </div>
+          <button type="button" class="botao-remover" onclick="removerArquivo(${index})">
+            ✕
+          </button>
+        </li>
+      `
+        )
+        .join("");
+    }
+
+    function removerArquivo(index) {
+      arquivos.splice(index, 1);
+      renderizarArquivos();
+    }
+
+    function limparForm() {
+      document.getElementById("form-exame").reset();
+      arquivos = [];
+      renderizarArquivos();
+    }
+
+    function handleImportarExame(event) {
+      event.preventDefault();
+
+      if (arquivos.length === 0) {
+        alert("Selecione pelo menos um arquivo para importar.");
+        return;
+      }
+
+      const formData = {
+        animal: document.getElementById("animal").value,
+        tipoExame: document.getElementById("tipo-exame").value,
+        dataExame: document.getElementById("data-exame").value,
+        clinica: document.getElementById("clinica").value,
+        medico: document.getElementById("medico").value,
+        observacoes: document.getElementById("observacoes").value,
+        arquivos: arquivos.map((a) => a.name),
+      };
+
+      console.log("Importação de exame:", formData);
+
+      // Salvar em localStorage
+      const examesImportados = JSON.parse(localStorage.getItem("examesImportados") || "[]");
+      examesImportados.push({
+        ...formData,
+        dataImportacao: new Date().toISOString(),
+        status: "processando",
+      });
+      localStorage.setItem("examesImportados", JSON.stringify(examesImportados));
+
+      alert("Exame importado com sucesso! Será processado em breve.");
+      limparForm();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Internação</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .container-internacao {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card-internacao {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      border-left: 4px solid var(--cor-aviso);
+    }
+
+    .info-internacao {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .info-item {
+      background-color: var(--cor-fundo);
+      padding: var(--espaco-md);
+      border-radius: var(--raio-borda);
+      border-left: 4px solid var(--cor-primaria);
+    }
+
+    .info-label {
+      font-size: 0.8rem;
+      color: var(--cor-texto-suave);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-valor {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cor-texto);
+    }
+
+    .timeline-internacao {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .evento-internacao {
+      position: relative;
+      margin-bottom: var(--espaco-lg);
+      padding-bottom: var(--espaco-lg);
+      border-left: 2px solid var(--cor-borda);
+    }
+
+    .evento-internacao:last-child {
+      border-left: none;
+    }
+
+    .ponto-evento {
+      position: absolute;
+      left: -0.75rem;
+      top: 0;
+      width: 1rem;
+      height: 1rem;
+      background-color: var(--cor-primaria);
+      border: 3px solid var(--cor-cartao);
+      border-radius: 50%;
+    }
+
+    .data-evento {
+      font-size: 0.85rem;
+      color: var(--cor-texto-suave);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .titulo-evento {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cor-texto);
+      margin-bottom: 0.5rem;
+    }
+
+    .descricao-evento {
+      font-size: 0.9rem;
+      color: var(--cor-texto-suave);
+      line-height: 1.4;
+    }
+
+    .status-internacao {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .status-ativa {
+      background-color: rgba(243, 156, 18, 0.2);
+      color: var(--cor-aviso);
+    }
+
+    .status-alta {
+      background-color: rgba(39, 174, 96, 0.2);
+      color: var(--cor-sucesso);
+    }
+
+    @media (max-width: 768px) {
+      .info-internacao {
+        grid-template-columns: 1fr;
+      }
+
+      .container-internacao {
+        padding: 0 var(--espaco-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Internações</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <div class="container-internacao" id="internacoes-container"></div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Dados de exemplo
+    const internacoes = [
+      {
+        id: 1,
+        animal: "Fluffy",
+        tipo: "Gato",
+        emoji: "🐱",
+        motivo: "Gastroenterite",
+        dataEntrada: "2025-04-20",
+        dataEstimadaSaida: "2025-04-27",
+        medico: "Dr. João Silva",
+        medicamentos: ["Antibiótico", "Hidratação IV", "Antieméticos"],
+        eventos: [
+          { data: "2025-04-20 10:00", titulo: "Entrada", descricao: "Animal internado com sintomas de gastroenterite" },
+          { data: "2025-04-21 14:00", titulo: "Exames", descricao: "Exame de sangue e ultrassom realizados" },
+          { data: "2025-04-22 09:00", titulo: "Melhora", descricao: "Animal apresentando melhora nos sintomas" },
+          { data: "2025-04-24 15:00", titulo: "Alta Prevista", descricao: "Animal apto para receber alta em 48h" },
+        ],
+        status: "ativa",
+      },
+      {
+        id: 2,
+        animal: "Rex",
+        tipo: "Cão",
+        emoji: "🐕",
+        motivo: "Pós-operatório - Apendicectomia",
+        dataEntrada: "2025-04-15",
+        dataEstimadaSaida: "2025-04-28",
+        medico: "Dra. Ana Costa",
+        medicamentos: ["Antibiótico", "Analgésico", "Anti-inflamatório"],
+        eventos: [
+          { data: "2025-04-15 08:00", titulo: "Cirurgia", descricao: "Apendicectomia realizada com sucesso" },
+          { data: "2025-04-15 16:00", titulo: "Recuperação", descricao: "Animal em pós-operatório imediato" },
+          { data: "2025-04-16 10:00", titulo: "Curativos", descricao: "Troca de curativos e limpeza da ferida" },
+          { data: "2025-04-20 09:00", titulo: "Controle", descricao: "Ferida cicatrizando bem" },
+          { data: "2025-04-24 14:00", titulo: "Recuperação Completa", descricao: "Animal recuperado e pronto para alta" },
+        ],
+        status: "recuperacao",
+      },
+    ];
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+      renderizarInternacoes();
+    });
+
+    function renderizarInternacoes() {
+      const container = document.getElementById("internacoes-container");
+
+      container.innerHTML = internacoes
+        .map(
+          (internacao) => `
+        <div class="card-internacao">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 2rem;">${internacao.emoji}</span>
+              ${internacao.animal}
+            </h2>
+            <span class="status-internacao status-${internacao.status}">
+              ${internacao.status === "ativa" ? "🏥 Ativa" : "✅ Recuperação"}
+            </span>
+          </div>
+
+          <div class="info-internacao">
+            <div class="info-item">
+              <div class="info-label">Motivo da Internação</div>
+              <div class="info-valor">${internacao.motivo}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Data de Entrada</div>
+              <div class="info-valor">${new Date(internacao.dataEntrada).toLocaleDateString("pt-BR")}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Data Estimada de Saída</div>
+              <div class="info-valor">${new Date(internacao.dataEstimadaSaida).toLocaleDateString("pt-BR")}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Médico Responsável</div>
+              <div class="info-valor">${internacao.medico}</div>
+            </div>
+          </div>
+
+          <h3 style="color: var(--cor-primaria); margin-top: 1.5rem; margin-bottom: 1rem;">💊 Medicamentos</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+            ${internacao.medicamentos
+              .map(
+                (med) => `
+              <span style="
+                background-color: rgba(46, 158, 91, 0.2);
+                color: var(--cor-primaria);
+                padding: 0.4rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.85rem;
+              ">
+                ${med}
+              </span>
+            `
+              )
+              .join("")}
+          </div>
+
+          <h3 style="color: var(--cor-primaria); margin-bottom: 1rem;">📅 Histórico de Eventos</h3>
+          <div class="timeline-internacao">
+            ${internacao.eventos
+              .map(
+                (evento) => `
+              <div class="evento-internacao">
+                <div class="ponto-evento"></div>
+                <div class="data-evento">${evento.data}</div>
+                <div class="titulo-evento">${evento.titulo}</div>
+                <div class="descricao-evento">${evento.descricao}</div>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      `
+        )
+        .join("");
+    }
+  </script>
+</body>
+</html>

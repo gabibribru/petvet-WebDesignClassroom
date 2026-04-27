@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Tela Inicial</title>
+  
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Estilos específicos da página inicial */
+    .card-destaque .botao-principal {
+      margin-top: 1rem;
+    }
+    
+
+    .card-servico {
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    @media (min-width: 768px) {
+      .coluna-servicos {
+        max-width: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Cabeçalho -->
+    <header class="cabecalho-inicial">
+      <h1 class="titulo-clinica">Clínica Veterinária Ricardo Duarte</h1>
+      <button class="botao-logout-usuario">
+        <span class="icone-logout">🚪</span>
+        <span class="texto-logout">Sair</span>
+      </button>
+      <button class="botao-tema-inicial">🌙</button>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <div class="grade-servicos">
+        <!-- Coluna 1 -->
+        <div class="coluna-servicos">
+          <!-- Pronto Atendimento -->
+          <div class="card-destaque">
+            <div class="titulo-card">
+              <span class="icone-card">🩺</span> Pronto Atendimento
+            </div>
+            <p class="descricao-card">
+              Seja atendido agora por um médico veterinário da Clinica Veterinária Ricardo Duarte
+            </p>
+            <button
+              class="botao-principal"
+              onclick="window.petvet.irPara('/encontrar-veterinario')"
+            >
+              Iniciar Atendimento
+            </button>
+          </div>
+
+          <!-- Agendamento -->
+          <div class="card-servico" data-rota="/agendar-consulta" style="cursor: pointer">
+            <h3 class="titulo-servico">Agendamento</h3>
+            <p class="descricao-servico">Agende consultas, exames e outros serviços</p>
+          </div>
+
+          <!-- Resultados de Exames -->
+          <div class="card-servico" data-rota="/resultados-exames" style="cursor: pointer">
+            <h3 class="titulo-servico">Resultados de Exames</h3>
+            <p class="descricao-servico">Acesse e compartilhe seus resultados</p>
+          </div>
+        </div>
+
+        <!-- Coluna 2 -->
+        <div class="coluna-servicos">
+          <!-- Saúde do Animal -->
+          <div class="card-servico card-secundario">
+            <h2 class="titulo-card">
+              <span class="icone-card">💚</span> Saúde do meu animal
+            </h2>
+            <p class="descricao-servico">Visualize o histórico médico completo do seu animal.</p>
+          </div>
+
+          <!-- Prontuário -->
+          <div class="card-servico" data-rota="/meu-prontuario" style="cursor: pointer">
+            <h3 class="titulo-servico">Prontuário do seu Animal</h3>
+            <p class="descricao-servico">Acompanhe documentos e tratamentos</p>
+          </div>
+
+          <!-- Importar Exames -->
+          <div class="card-servico" data-rota="/importar-exames" style="cursor: pointer">
+            <h3 class="titulo-servico">Importar Exames</h3>
+            <p class="descricao-servico">Importe resultados de exames externo</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    // Verificar se usuário está logado
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>
