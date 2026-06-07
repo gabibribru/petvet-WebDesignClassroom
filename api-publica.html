@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetVet - Raças de Cães</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .raca-destaque {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      border-left: 4px solid var(--cor-primaria);
+      display: flex;
+      gap: var(--espaco-lg);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .foto-destaque {
+      width: 110px;
+      height: 110px;
+      border-radius: var(--raio-borda);
+      object-fit: cover;
+      background-color: var(--cor-borda);
+      flex-shrink: 0;
+    }
+
+    .foto-destaque-placeholder {
+      width: 110px;
+      height: 110px;
+      border-radius: var(--raio-borda);
+      background-color: var(--cor-primaria-clara);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      flex-shrink: 0;
+    }
+
+    .info-destaque {
+      flex: 1;
+    }
+
+    .info-destaque .badge-api {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--cor-primaria-clara);
+      color: var(--cor-primaria);
+      border-radius: 20px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .info-destaque h2 {
+      margin: 0 0 var(--espaco-xs);
+      text-transform: capitalize;
+    }
+
+    .info-destaque p {
+      margin: 0 0 var(--espaco-md);
+    }
+
+    .filtros-busca {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .filtros-busca h2 {
+      margin-bottom: var(--espaco-md);
+    }
+
+    .grid-filtros {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--espaco-md);
+      align-items: flex-end;
+    }
+
+    @media (max-width: 500px) {
+      .grid-filtros { grid-template-columns: 1fr; }
+    }
+
+    .grid-racas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--espaco-lg);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .card-raca {
+      background-color: var(--cor-cartao);
+      border: 1px solid var(--cor-cartao-borda);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      transition: all var(--transicao-media);
+      cursor: pointer;
+    }
+
+    .card-raca:hover {
+      box-shadow: 0 3px 6px var(--sombra-hover);
+      transform: translateY(-2px);
+    }
+
+    .thumbnail-raca {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: calc(var(--raio-borda) - 4px);
+      margin-bottom: var(--espaco-md);
+      background-color: var(--cor-primaria-clara);
+      display: block;
+    }
+
+    .thumbnail-placeholder {
+      width: 100%;
+      height: 140px;
+      border-radius: calc(var(--raio-borda) - 4px);
+      margin-bottom: var(--espaco-md);
+      background-color: var(--cor-primaria-clara);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+
+    .card-raca h3 {
+      margin-bottom: var(--espaco-xs);
+      text-transform: capitalize;
+    }
+
+    .subraca-tag {
+      display: inline-block;
+      background-color: rgba(46, 158, 91, 0.15);
+      color: var(--cor-primaria);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      margin-right: var(--espaco-xs);
+      margin-bottom: var(--espaco-xs);
+      text-transform: capitalize;
+    }
+
+    .botao-ver-fotos {
+      width: 100%;
+      margin-top: var(--espaco-md);
+    }
+
+    .sem-resultados {
+      text-align: center;
+      padding: var(--espaco-xl);
+      color: var(--cor-texto-suave);
+      grid-column: 1 / -1;
+    }
+
+    .sem-resultados-icone {
+      font-size: 3rem;
+      margin-bottom: var(--espaco-md);
+    }
+
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        var(--cor-borda) 25%,
+        var(--cor-cartao-borda) 50%,
+        var(--cor-borda) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: var(--raio-borda);
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-card {
+      height: 280px;
+    }
+
+    /* ── Contador ────────────────────────────────────────────── */
+    .contador-resultados {
+      font-size: 0.85rem;
+      color: var(--cor-texto-suave);
+      margin-bottom: var(--espaco-md);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: flex-start;
+      justify-content: center;
+      padding: var(--espaco-lg);
+      overflow-y: auto;
+    }
+
+    .modal.visivel { display: flex; }
+
+    .modal-conteudo {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: 2rem;
+      max-width: 720px;
+      width: 100%;
+      margin: auto;
+      box-shadow: 0 4px 12px var(--sombra-hover);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      text-transform: capitalize;
+    }
+
+    .botao-fechar-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--cor-texto-suave);
+    }
+
+    .galeria-fotos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: var(--espaco-md);
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .galeria-fotos img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: var(--raio-borda);
+      cursor: zoom-in;
+      transition: transform var(--transicao-rapida), box-shadow var(--transicao-rapida);
+      background-color: var(--cor-borda);
+    }
+
+    .galeria-fotos img:hover {
+      transform: scale(1.04);
+      box-shadow: 0 4px 10px var(--sombra-hover);
+    }
+
+  
+    .modal-subracas {
+      margin-bottom: var(--espaco-lg);
+    }
+
+    .modal-subracas h3 {
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .modal-acoes {
+      display: flex;
+      gap: var(--espaco-md);
+      margin-top: var(--espaco-lg);
+    }
+
+    .modal-acoes button { flex: 1; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--cor-borda);
+      border-top-color: var(--cor-primaria);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .secao-json {
+      background-color: var(--cor-cartao);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      margin-top: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+    }
+
+    .secao-json h3 {
+      color: var(--cor-primaria);
+      margin-top: 0;
+      margin-bottom: var(--espaco-md);
+    }
+
+    .bloco-json {
+      background-color: #1e1e1e;
+      color: #9cdcfe;
+      border-radius: 8px;
+      padding: var(--espaco-md);
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      max-height: 260px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.6;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.visivel { display: flex; }
+
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .lightbox-fechar {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .raca-destaque    { flex-direction: column; }
+      .foto-destaque,
+      .foto-destaque-placeholder { width: 100%; height: 180px; }
+      .galeria-fotos    { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="cabecalho">
+      <a href="#" data-navegar="/" class="botao-voltar">
+        <span class="seta-voltar">←</span>
+      </a>
+      <h1>Raças de Cães</h1>
+      <button class="botao-tema">🌙</button>
+    </header>
+
+    <main class="conteudo-principal">
+
+      <div class="raca-destaque" id="card-destaque">
+        <div class="foto-destaque-placeholder">🐶</div>
+        <div class="info-destaque">
+          <span class="badge-api">🌐 Dog CEO API — dog.ceo/dog-api</span>
+          <h2>Carregando raça do dia...</h2>
+          <p>Buscando dados da API pública de raças de cães.</p>
+        </div>
+      </div>
+
+      <div class="filtros-busca">
+        <h2>🔍 Explorar Raças</h2>
+        <div class="grid-filtros">
+          <div class="campo-formulario">
+            <label for="busca-raca">Filtrar por nome da raça</label>
+            <input type="text" id="busca-raca"
+                   placeholder="Ex: labrador, poodle, husky..."
+                   oninput="filtrarRacas(this.value)" />
+          </div>
+          <button class="botao-secundario" onclick="carregarRacaAleatoria()" style="white-space:nowrap">
+            🎲 Aleatória
+          </button>
+        </div>
+      </div>
+
+      <p class="contador-resultados" id="contador-resultados"></p>
+
+      <div class="grid-racas" id="grid-racas">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+
+      <div class="secao-json">
+        <h3>📄 Resposta JSON da API</h3>
+        <pre class="bloco-json" id="bloco-json">Aguardando requisição à API...</pre>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="modal-raca" class="modal">
+    <div class="modal-conteudo">
+      <div class="modal-header">
+        <h2 id="modal-nome-raca"></h2>
+        <button class="botao-fechar-modal" onclick="fecharModal()">✕</button>
+      </div>
+      <div id="modal-corpo"></div>
+    </div>
+  </div>
+
+  <div id="lightbox" class="lightbox" onclick="fecharLightbox()">
+    <button class="lightbox-fechar" onclick="fecharLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Foto ampliada" onclick="event.stopPropagation()" />
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    const API = "https://dog.ceo/api";
+    let todasRacas = []; // [{ nome, subracas[] }]
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+        return;
+      }
+      carregarTudo();
+    });
+
+    async function carregarTudo() {
+      await Promise.all([carregarTodasRacas(), carregarRacaAleatoria()]);
+    }
+
+    async function carregarTodasRacas() {
+      try {
+        const res  = await fetch(API + "/breeds/list/all");
+        const data = await res.json();
+        exibirJSON(data);
+
+        todasRacas = Object.entries(data.message).map(([nome, subs]) => ({
+          nome,
+          subracas: subs,
+          thumbnail: null,
+        }));
+
+        renderizarGrid(todasRacas);
+        carregarThumbnails(todasRacas.slice(0, 12)); // primeiros 12 thumbs
+      } catch (err) {
+        document.getElementById("grid-racas").innerHTML = `
+          <div class="sem-resultados" style="grid-column:1/-1">
+            <div class="sem-resultados-icone">⚠️</div>
+            <h3>Não foi possível carregar as raças</h3>
+            <p>${err.message}</p>
+          </div>`;
+      }
+    }
+
+    async function carregarThumbnails(lista) {
+      for (const raca of lista) {
+        try {
+          const res  = await fetch(`${API}/breed/${raca.nome}/images/random`);
+          const data = await res.json();
+          const img  = document.getElementById("thumb-" + raca.nome);
+          if (img && data.status === "success") {
+            img.src = data.message;
+            img.style.display = "block";
+            img.nextElementSibling?.remove();
+          }
+        } catch (_) {}
+      }
+    }
+
+    async function carregarRacaAleatoria() {
+      const card = document.getElementById("card-destaque");
+      try {
+        const res  = await fetch(API + "/breeds/image/random");
+        const data = await res.json();
+        exibirJSON(data);
+
+        const url  = data.message;
+        const nome = url.split("/breeds/")[1]?.split("/")[0] || "Desconhecida";
+
+        card.innerHTML = `
+          <img class="foto-destaque" src="${url}" alt="${nome}"
+               onclick="abrirModal('${nome}')" style="cursor:pointer" />
+          <div class="info-destaque">
+            <span class="badge-api">🌐 Dog CEO API — dog.ceo/dog-api</span>
+            <h2>${nome}</h2>
+            <p>Esta é a raça sorteada aleatoriamente pela API. Clique na foto ou no botão para explorar as fotos desta raça.</p>
+            <button class="botao-principal" onclick="abrirModal('${nome}')">
+              📸 Ver mais fotos de ${nome}
+            </button>
+          </div>`;
+      } catch (err) {
+        card.innerHTML = `
+          <div class="foto-destaque-placeholder">🐶</div>
+          <div class="info-destaque">
+            <span class="badge-api">🌐 Dog CEO API</span>
+            <h2>Raça em destaque</h2>
+            <p>Não foi possível carregar a raça aleatória. <a href="#" onclick="carregarRacaAleatoria()">Tentar novamente</a></p>
+          </div>`;
+      }
+    }
+
+    // ── Renderiza o grid de cards ─────────────────────────────
+    function renderizarGrid(lista) {
+      const grid     = document.getElementById("grid-racas");
+      const contador = document.getElementById("contador-resultados");
+      contador.textContent = lista.length + " raça(s) encontrada(s)";
+
+      if (!lista.length) {
+        grid.innerHTML = `
+          <div class="sem-resultados">
+            <div class="sem-resultados-icone">🔍</div>
+            <h3>Nenhuma raça encontrada</h3>
+            <p>Tente um termo diferente na busca.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = lista.map(raca => `
+        <div class="card-raca" onclick="abrirModal('${raca.nome}')">
+          <img id="thumb-${raca.nome}"
+               class="thumbnail-raca"
+               src=""
+               alt="${raca.nome}"
+               style="display:none"
+               onerror="this.style.display='none'" />
+          <div class="thumbnail-placeholder" id="placeholder-${raca.nome}">🐕</div>
+
+          <h3>${raca.nome}</h3>
+
+          <div>
+            ${raca.subracas.slice(0, 4).map(s =>
+              `<span class="subraca-tag">${s}</span>`
+            ).join("")}
+            ${raca.subracas.length > 4
+              ? `<span class="subraca-tag">+${raca.subracas.length - 4}</span>`
+              : ""}
+          </div>
+
+          <button class="botao-principal botao-ver-fotos">
+            📸 Ver fotos
+          </button>
+        </div>`).join("");
+
+      carregarThumbnails(lista.slice(0, 18));
+    }
+
+    function filtrarRacas(termo) {
+      const filtradas = todasRacas.filter(r =>
+        r.nome.toLowerCase().includes(termo.toLowerCase()) ||
+        r.subracas.some(s => s.toLowerCase().includes(termo.toLowerCase()))
+      );
+      renderizarGrid(filtradas);
+    }
+
+    async function abrirModal(nome) {
+      const modal  = document.getElementById("modal-raca");
+      const titulo = document.getElementById("modal-nome-raca");
+      const corpo  = document.getElementById("modal-corpo");
+
+      titulo.textContent = nome;
+      corpo.innerHTML = `<div class="spinner"></div>`;
+      modal.classList.add("visivel");
+
+      const raca = todasRacas.find(r => r.nome === nome);
+
+      try {
+        const res  = await fetch(`${API}/breed/${nome}/images/random/9`);
+        const data = await res.json();
+        exibirJSON(data);
+
+        const temSubracas = raca?.subracas?.length > 0;
+
+        corpo.innerHTML = `
+          ${temSubracas ? `
+          <div class="modal-subracas">
+            <h3>Sub-raças</h3>
+            ${raca.subracas.map(s =>
+              `<span class="subraca-tag">${s}</span>`
+            ).join("")}
+          </div>` : ""}
+
+          <h3 style="color:var(--cor-primaria);margin-bottom:var(--espaco-md)">
+            📸 Galeria de Fotos
+          </h3>
+
+          <div class="galeria-fotos">
+            ${data.message.map(url => `
+              <img src="${url}"
+                   alt="${nome}"
+                   loading="lazy"
+                   onerror="this.style.display='none'"
+                   onclick="abrirLightbox('${url}')" />`).join("")}
+          </div>
+
+          <div class="modal-acoes">
+            <button class="botao-secundario" onclick="abrirModal('${nome}')">
+              🔄 Novas fotos
+            </button>
+            <button class="botao-principal" onclick="fecharModal()">
+              Fechar
+            </button>
+          </div>`;
+      } catch (err) {
+        corpo.innerHTML = `
+          <p style="color:var(--cor-erro);padding:1rem">
+            Erro ao carregar fotos: ${err.message}
+          </p>
+          <button class="botao-secundario" onclick="fecharModal()">Fechar</button>`;
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById("modal-raca").classList.remove("visivel");
+    }
+
+    document.getElementById("modal-raca").addEventListener("click", function (e) {
+      if (e.target === this) fecharModal();
+    });
+
+    function abrirLightbox(url) {
+      document.getElementById("lightbox-img").src = url;
+      document.getElementById("lightbox").classList.add("visivel");
+    }
+
+    function fecharLightbox() {
+      document.getElementById("lightbox").classList.remove("visivel");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") { fecharModal(); fecharLightbox(); }
+    });
+
+    function exibirJSON(obj) {
+      document.getElementById("bloco-json").textContent =
+        JSON.stringify(obj, null, 2);
+    }
+  </script>
+</body>
+</html>
