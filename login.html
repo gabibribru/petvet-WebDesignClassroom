@@ -62,7 +62,7 @@
           <div class="opcoes-adicionais">
             <p>
               Não tem uma conta?
-              <a href="#" class="link-cadastro">Cadastre-se</a>
+              <a href="cadastro.html" class="link-cadastro">Cadastre-se</a>
             </p>
           </div>
 
@@ -79,13 +79,46 @@
       </div>
     </div>
   </div>
-   <script>
-  function handleLogin(event) {
-    event.preventDefault(); // evita reload da página
+  <script src="main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "index.html";
+      }
+    });
 
-    // Sempre redireciona para o index.html
-    window.location.href = "index.html";
-  }
-</script>
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("senha").value;
+      const msgErro    = document.getElementById("mensagem-erro");
+      const msgSucesso = document.getElementById("mensagem-sucesso");
+      const botao      = document.getElementById("botao-enviar");
+
+      msgErro.classList.add("hidden");
+      msgSucesso.classList.add("hidden");
+
+      const resultado = window.petvet.usuarioManager.login(email, senha);
+
+      if (!resultado.sucesso) {
+        msgErro.textContent = resultado.mensagem;
+        msgErro.classList.remove("hidden");
+        return;
+      }
+
+      botao.disabled = true;
+      msgSucesso.textContent = "Login realizado com sucesso! Redirecionando...";
+      msgSucesso.classList.remove("hidden");
+
+      setTimeout(() => {
+        if (resultado.usuario.tipo === "admin") {
+          window.location.href = "admin-dashboard.html";
+        } else {
+          window.location.href = "index.html";
+        }
+      }, 1000);
+    }
+  </script>
 </body>
 </html>

@@ -4,111 +4,501 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PetVet - Tela Inicial</title>
-  
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Estilos específicos da página inicial */
-    .card-destaque .botao-principal {
-      margin-top: 1rem;
+    :root {
+      --cor-fundo: #ffffff;
+      --cor-texto: #333333;
+      --cor-primaria: #2e9e5b;
+      --cor-primaria-hover: #25844c;
+      --cor-primaria-clara: #e6f4ed;
+      --cor-secundaria: #3aa0b9;
+      --cor-borda: #e0e0e0;
+      --cor-cartao: #f8f9fa;
+      --cor-cartao-borda: #e9ecef;
+      --cor-erro: #e74c3c;
+      --cor-texto-suave: #6c757d;
+      --sombra: rgba(0,0,0,.05);
+      --sombra-hover: rgba(0,0,0,.1);
+      --raio-borda: 12px;
+      --espaco-sm: .5rem;
+      --espaco-md: 1rem;
+      --espaco-lg: 1.5rem;
+      --transicao-rapida: .2s ease;
+      --transicao-media: .3s ease;
     }
-    
+
+    body.escuro {
+      --cor-fundo: #121212;
+      --cor-texto: #f8f9fa;
+      --cor-primaria: #3eb370;
+      --cor-primaria-hover: #4cc985;
+      --cor-primaria-clara: #1a3a2a;
+      --cor-secundaria: #4db8d5;
+      --cor-borda: #333333;
+      --cor-cartao: #1e1e1e;
+      --cor-cartao-borda: #333333;
+      --cor-texto-suave: #adb5bd;
+      --sombra: rgba(0,0,0,.2);
+      --sombra-hover: rgba(0,0,0,.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: var(--cor-fundo);
+      color: var(--cor-texto);
+      line-height: 1.6;
+      transition: background-color var(--transicao-media), color var(--transicao-media);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .cabecalho {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--espaco-md);
+      border-bottom: 1px solid var(--cor-borda);
+      background-color: var(--cor-fundo);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      gap: var(--espaco-md);
+    }
+
+    .cabecalho h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--cor-texto);
+      margin: 0;
+      line-height: 1;
+    }
+
+    .btn-sair-home {
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-sm);
+      background-color: var(--cor-cartao);
+      border: 1px solid var(--cor-borda);
+      border-radius: 2rem;
+      padding: .5rem 1rem;
+      color: var(--cor-texto);
+      font-family: "Poppins", sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transicao-rapida);
+    }
+
+    .btn-sair-home:hover {
+      background-color: rgba(231,76,60,.1);
+      color: var(--cor-erro);
+      border-color: var(--cor-erro);
+    }
+
+    .btn-tema-home {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color var(--transicao-rapida);
+    }
+
+    .btn-tema-home:hover { background-color: var(--cor-cartao); }
+
+    .conteudo-principal {
+      flex: 1;
+      padding: var(--espaco-md);
+      width: 100%;
+    }
+
+    .grade-servicos {
+      display: flex;
+      flex-direction: column;
+      gap: var(--espaco-md);
+    }
+
+    .coluna-servicos {
+      display: flex;
+      flex-direction: column;
+      gap: var(--espaco-md);
+    }
+
+    @media (min-width: 768px) {
+      .grade-servicos  { flex-direction: row; gap: var(--espaco-lg); }
+      .coluna-servicos { flex: 1; }
+    }
+
+    .card-destaque {
+      background-color: var(--cor-primaria-clara);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      box-shadow: 0 2px 4px var(--sombra);
+      border-left: 4px solid var(--cor-primaria);
+      transition: all var(--transicao-media);
+    }
+
+    .card-destaque:hover {
+      box-shadow: 0 4px 8px var(--sombra-hover);
+      transform: translateY(-2px);
+    }
 
     .card-servico {
-      min-height: 120px;
+      background-color: var(--cor-cartao);
+      border: 1px solid var(--cor-cartao-borda);
+      border-radius: var(--raio-borda);
+      padding: var(--espaco-lg);
+      box-shadow: 0 1px 3px var(--sombra);
+      transition: all var(--transicao-media);
+      cursor: pointer;
+      min-height: 100px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
+    .card-servico:hover {
+      box-shadow: 0 3px 6px var(--sombra-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-servico.card-secundario { border-left: 4px solid var(--cor-secundaria); cursor: default; }
+    .card-api                     { border-left: 4px solid var(--cor-secundaria); }
+
+    .titulo-card {
+      display: flex;
+      align-items: center;
+      gap: var(--espaco-sm);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .titulo-servico {
+      font-family: "Poppins", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: var(--espaco-sm);
+      color: var(--cor-texto);
+    }
+
+    .descricao-card,
+    .descricao-servico {
+      font-family: "Poppins", sans-serif;
+      font-size: .875rem;
+      color: var(--cor-texto-suave);
+      line-height: 1.45;
+      margin-bottom: var(--espaco-md);
+    }
+
+    .botao-principal {
+      font-family: "Poppins", sans-serif;
+      background-color: var(--cor-primaria);
+      color: #fff;
+      border: none;
+      border-radius: var(--raio-borda);
+      padding: .8rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color var(--transicao-rapida), transform var(--transicao-rapida);
+    }
+
+    .botao-principal:hover  { background-color: var(--cor-primaria-hover); transform: translateY(-1px); }
+    .botao-principal:active { transform: scale(.98); }
+
+    .carrossel {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--raio-borda);
+      margin-bottom: var(--espaco-lg);
+      box-shadow: 0 2px 8px var(--sombra);
+    }
+
+    .carrossel-faixa {
+      display: flex;
+      transition: transform .45s ease;
+    }
+
+    .carrossel-slide {
+      min-width: 100%;
+      height: 195px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--espaco-lg);
+      text-align: center;
+      user-select: none;
+    }
+
+    .carrossel-slide:nth-child(1) { background: linear-gradient(135deg,#2e9e5b,#1a7a43); }
+    .carrossel-slide:nth-child(2) { background: linear-gradient(135deg,#3aa0b9,#1f7d99); }
+    .carrossel-slide:nth-child(3) { background: linear-gradient(135deg,#7b52ab,#5a3888); }
+    .carrossel-slide:nth-child(4) { background: linear-gradient(135deg,#e67e22,#c96b0f); }
+    .carrossel-slide:nth-child(5) { background: linear-gradient(135deg,#e74c3c,#c0392b); }
+
+    .slide-icone  { font-size: 2.5rem; margin-bottom: .4rem; line-height: 1; }
+    .slide-titulo { font-family: "Poppins", sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0 0 .3rem; }
+    .slide-desc   { font-family: "Poppins", sans-serif; font-size: .875rem; color: rgba(255,255,255,.88); margin: 0; line-height: 1.4; }
+
+    .carrossel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,.3);
+      border: none;
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transicao-rapida);
+      z-index: 2;
+    }
+
+    .carrossel-btn:hover { background: rgba(0,0,0,.55); }
+    .carrossel-btn.prev  { left: 10px; }
+    .carrossel-btn.next  { right: 10px; }
+
+    .carrossel-pontos {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+    }
+
+    .carrossel-pontos button {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(255,255,255,.45);
+      cursor: pointer;
+      transition: background var(--transicao-rapida);
+    }
+
+    .carrossel-pontos button.ativo { background: #fff; }
+
     @media (min-width: 768px) {
-      .coluna-servicos {
-        max-width: 400px;
-      }
+      .carrossel-slide { height: 230px; }
+      .slide-icone     { font-size: 3rem; }
+      .slide-titulo    { font-size: 1.4rem; }
+      .slide-desc      { font-size: .95rem; }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Cabeçalho -->
-    <header class="cabecalho-inicial">
-      <h1 class="titulo-clinica">Clínica Veterinária Ricardo Duarte</h1>
-      <button class="botao-logout-usuario">
-        <span class="icone-logout">🚪</span>
-        <span class="texto-logout">Sair</span>
-      </button>
-      <button class="botao-tema-inicial">🌙</button>
+
+    <header class="cabecalho">
+      <h1>🐾 PetVet</h1>
+      <div style="display:flex;gap:1rem;align-items:center">
+        <button class="btn-sair-home" onclick="sairPetVet()">
+          <span>🚪</span>
+          <span>Sair</span>
+        </button>
+        <button class="btn-tema-home" id="btn-tema" onclick="alternarTema()">🌙</button>
+      </div>
     </header>
 
-    <!-- Conteúdo Principal -->
     <main class="conteudo-principal">
+
+      <div class="carrossel" id="carrossel">
+        <div class="carrossel-faixa" id="carrossel-faixa">
+          <div class="carrossel-slide">
+            <div class="slide-icone">🐾</div>
+            <p class="slide-titulo">Bem-vindo ao PetVet</p>
+            <p class="slide-desc">Cuidando com carinho do seu melhor amigo</p>
+          </div>
+          <div class="carrossel-slide">
+            <div class="slide-icone">🩺</div>
+            <p class="slide-titulo">Pronto Atendimento 24h</p>
+            <p class="slide-desc">Veterinários disponíveis a qualquer hora para emergências</p>
+          </div>
+          <div class="carrossel-slide">
+            <div class="slide-icone">💉</div>
+            <p class="slide-titulo">Vacinação em Dia</p>
+            <p class="slide-desc">Mantenha a carteira de vacinação do seu pet atualizada</p>
+          </div>
+          <div class="carrossel-slide">
+            <div class="slide-icone">🔬</div>
+            <p class="slide-titulo">Laboratório Completo</p>
+            <p class="slide-desc">Exames rápidos com resultados online no mesmo dia</p>
+          </div>
+          <div class="carrossel-slide">
+            <div class="slide-icone">🏥</div>
+            <p class="slide-titulo">Internação e Cirurgia</p>
+            <p class="slide-desc">Estrutura moderna com monitoramento contínuo</p>
+          </div>
+        </div>
+        <button class="carrossel-btn prev" id="btn-prev" aria-label="Anterior">&#8592;</button>
+        <button class="carrossel-btn next" id="btn-next" aria-label="Próximo">&#8594;</button>
+        <div class="carrossel-pontos" id="carrossel-pontos"></div>
+      </div>
+
       <div class="grade-servicos">
-        <!-- Coluna 1 -->
+
         <div class="coluna-servicos">
-          <!-- Pronto Atendimento -->
           <div class="card-destaque">
             <div class="titulo-card">
-              <span class="icone-card">🩺</span> Pronto Atendimento
+              <span>🩺</span> Pronto Atendimento
             </div>
             <p class="descricao-card">
-              Seja atendido agora por um médico veterinário da Clinica Veterinária Ricardo Duarte
+              Seja atendido agora por um médico veterinário da Clínica Ricardo Duarte
             </p>
-            <button
-              class="botao-principal"
-              onclick="window.petvet.irPara('/encontrar-veterinario')"
-            >
+            <button class="botao-principal"
+                    onclick="window.location.href='encontrar-veterinario.html'">
               Iniciar Atendimento
             </button>
           </div>
 
-          <!-- Agendamento -->
-          <div class="card-servico" data-rota="/agendar-consulta" style="cursor: pointer">
-            <h3 class="titulo-servico">Agendamento</h3>
+          <div class="card-servico"
+               onclick="window.location.href='agendar-consulta.html'">
+            <h3 class="titulo-servico">📅 Agendamento</h3>
             <p class="descricao-servico">Agende consultas, exames e outros serviços</p>
           </div>
 
-          <!-- Resultados de Exames -->
-          <div class="card-servico" data-rota="/resultados-exames" style="cursor: pointer">
-            <h3 class="titulo-servico">Resultados de Exames</h3>
+          <div class="card-servico"
+               onclick="window.location.href='resultados-exames.html'">
+            <h3 class="titulo-servico">🔬 Resultados de Exames</h3>
             <p class="descricao-servico">Acesse e compartilhe seus resultados</p>
           </div>
         </div>
 
-        <!-- Coluna 2 -->
         <div class="coluna-servicos">
-          <!-- Saúde do Animal -->
           <div class="card-servico card-secundario">
             <h2 class="titulo-card">
-              <span class="icone-card">💚</span> Saúde do meu animal
+              <span>💚</span> Saúde do meu animal
             </h2>
             <p class="descricao-servico">Visualize o histórico médico completo do seu animal.</p>
           </div>
 
-          <!-- Prontuário -->
-          <div class="card-servico" data-rota="/meu-prontuario" style="cursor: pointer">
-            <h3 class="titulo-servico">Prontuário do seu Animal</h3>
+          <div class="card-servico"
+               onclick="window.location.href='meu-prontuario.html'">
+            <h3 class="titulo-servico">📋 Prontuário do seu Animal</h3>
             <p class="descricao-servico">Acompanhe documentos e tratamentos</p>
           </div>
 
-          <!-- Importar Exames -->
-          <div class="card-servico" data-rota="/importar-exames" style="cursor: pointer">
-            <h3 class="titulo-servico">Importar Exames</h3>
-            <p class="descricao-servico">Importe resultados de exames externo</p>
+          <div class="card-servico"
+               onclick="window.location.href='importar-exames.html'">
+            <h3 class="titulo-servico">📤 Importar Exames</h3>
+            <p class="descricao-servico">Importe resultados de exames externos</p>
+          </div>
+
+          <div class="card-servico card-api"
+               onclick="window.location.href='api-publica.html'">
+            <h3 class="titulo-servico">🐕 Raças de Cães</h3>
+            <p class="descricao-servico">Explore raças e fotos via API pública</p>
           </div>
         </div>
+
       </div>
     </main>
   </div>
 
   <script src="main.js"></script>
   <script>
-    // Verificar se usuário está logado
-    document.addEventListener("DOMContentLoaded", function () {
-      if (!window.petvet.usuarioManager.estaLogado()) {
-        window.location.href = "login.html";
+    (function () {
+      if (localStorage.getItem("petvet_tema") === "escuro") {
+        document.body.classList.add("escuro");
       }
+    })();
+
+    function alternarTema() {
+      document.body.classList.toggle("escuro");
+      var escuro = document.body.classList.contains("escuro");
+      localStorage.setItem("petvet_tema", escuro ? "escuro" : "claro");
+      document.getElementById("btn-tema").textContent = escuro ? "☀️" : "🌙";
+    }
+
+    function sairPetVet() {
+      localStorage.removeItem("petvet_usuario_logado");
+      window.location.href = "login.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var escuro = document.body.classList.contains("escuro");
+      document.getElementById("btn-tema").textContent = escuro ? "☀️" : "🌙";
+
+      if (window.petvet && !window.petvet.usuarioManager.estaLogado()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      initCarrossel();
     });
+
+    function initCarrossel() {
+      var faixa  = document.getElementById("carrossel-faixa");
+      var slides = faixa.querySelectorAll(".carrossel-slide");
+      var pontos = document.getElementById("carrossel-pontos");
+      var total  = slides.length;
+      var atual  = 0;
+      var timer;
+
+      slides.forEach(function (_, i) {
+        var p = document.createElement("button");
+        if (i === 0) p.classList.add("ativo");
+        p.setAttribute("aria-label", "Slide " + (i + 1));
+        p.addEventListener("click", function () { irParaSlide(i); reiniciarTimer(); });
+        pontos.appendChild(p);
+      });
+
+      function irParaSlide(n) {
+        atual = (n + total) % total;
+        faixa.style.transform = "translateX(-" + (atual * 100) + "%)";
+        pontos.querySelectorAll("button").forEach(function (p, i) {
+          p.classList.toggle("ativo", i === atual);
+        });
+      }
+
+      function avancar() { irParaSlide(atual + 1); }
+      function voltar()  { irParaSlide(atual - 1); }
+
+      function reiniciarTimer() {
+        clearInterval(timer);
+        timer = setInterval(avancar, 4000);
+      }
+
+      document.getElementById("btn-next").addEventListener("click", function () { avancar(); reiniciarTimer(); });
+      document.getElementById("btn-prev").addEventListener("click", function () { voltar(); reiniciarTimer(); });
+
+      var xInicio = 0;
+      faixa.addEventListener("touchstart", function (e) { xInicio = e.touches[0].clientX; }, { passive: true });
+      faixa.addEventListener("touchend", function (e) {
+        var diff = xInicio - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) { diff > 0 ? avancar() : voltar(); reiniciarTimer(); }
+      });
+
+      reiniciarTimer();
+    }
   </script>
 </body>
 </html>
