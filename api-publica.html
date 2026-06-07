@@ -41,7 +41,9 @@
       flex-shrink: 0;
     }
 
-    .info-destaque { flex: 1; }
+    .info-destaque {
+      flex: 1;
+    }
 
     .info-destaque .badge-api {
       display: inline-flex;
@@ -56,8 +58,14 @@
       margin-bottom: var(--espaco-sm);
     }
 
-    .info-destaque h2 { margin: 0 0 var(--espaco-xs); text-transform: capitalize; }
-    .info-destaque p  { margin: 0 0 var(--espaco-md); }
+    .info-destaque h2 {
+      margin: 0 0 var(--espaco-xs);
+      text-transform: capitalize;
+    }
+
+    .info-destaque p {
+      margin: 0 0 var(--espaco-md);
+    }
 
     .filtros-busca {
       background-color: var(--cor-cartao);
@@ -67,7 +75,9 @@
       box-shadow: 0 1px 3px var(--sombra);
     }
 
-    .filtros-busca h2 { margin-bottom: var(--espaco-md); }
+    .filtros-busca h2 {
+      margin-bottom: var(--espaco-md);
+    }
 
     .grid-filtros {
       display: grid;
@@ -141,7 +151,10 @@
       text-transform: capitalize;
     }
 
-    .botao-ver-fotos { width: 100%; margin-top: var(--espaco-md); }
+    .botao-ver-fotos {
+      width: 100%;
+      margin-top: var(--espaco-md);
+    }
 
     .sem-resultados {
       text-align: center;
@@ -150,7 +163,10 @@
       grid-column: 1 / -1;
     }
 
-    .sem-resultados-icone { font-size: 3rem; margin-bottom: var(--espaco-md); }
+    .sem-resultados-icone {
+      font-size: 3rem;
+      margin-bottom: var(--espaco-md);
+    }
 
     .skeleton {
       background: linear-gradient(
@@ -169,8 +185,11 @@
       100% { background-position: -200% 0; }
     }
 
-    .skeleton-card { height: 280px; }
+    .skeleton-card {
+      height: 280px;
+    }
 
+    /* ── Contador ────────────────────────────────────────────── */
     .contador-resultados {
       font-size: 0.85rem;
       color: var(--cor-texto-suave);
@@ -210,7 +229,10 @@
       border-bottom: 1px solid var(--cor-borda);
     }
 
-    .modal-header h2 { margin: 0; text-transform: capitalize; }
+    .modal-header h2 {
+      margin: 0;
+      text-transform: capitalize;
+    }
 
     .botao-fechar-modal {
       background: none;
@@ -242,10 +264,22 @@
       box-shadow: 0 4px 10px var(--sombra-hover);
     }
 
-    .modal-subracas { margin-bottom: var(--espaco-lg); }
-    .modal-subracas h3 { color: var(--cor-primaria); margin-bottom: var(--espaco-sm); }
+  
+    .modal-subracas {
+      margin-bottom: var(--espaco-lg);
+    }
 
-    .modal-acoes { display: flex; gap: var(--espaco-md); margin-top: var(--espaco-lg); }
+    .modal-subracas h3 {
+      color: var(--cor-primaria);
+      margin-bottom: var(--espaco-sm);
+    }
+
+    .modal-acoes {
+      display: flex;
+      gap: var(--espaco-md);
+      margin-top: var(--espaco-lg);
+    }
+
     .modal-acoes button { flex: 1; }
 
     .spinner {
@@ -268,7 +302,11 @@
       box-shadow: 0 1px 3px var(--sombra);
     }
 
-    .secao-json h3 { color: var(--cor-primaria); margin-top: 0; margin-bottom: var(--espaco-md); }
+    .secao-json h3 {
+      color: var(--cor-primaria);
+      margin-top: 0;
+      margin-bottom: var(--espaco-md);
+    }
 
     .bloco-json {
       background-color: #1e1e1e;
@@ -394,9 +432,8 @@
 
   <script src="main.js"></script>
   <script>
-    // API pública — Dog CEO (dog.ceo/dog-api)
     const API = "https://dog.ceo/api";
-    let todasRacas = [];
+    let todasRacas = []; // [{ nome, subracas[] }]
 
     document.addEventListener("DOMContentLoaded", function () {
       if (!window.petvet.usuarioManager.estaLogado()) {
@@ -423,7 +460,7 @@
         }));
 
         renderizarGrid(todasRacas);
-        carregarThumbnails(todasRacas.slice(0, 12));
+        carregarThumbnails(todasRacas.slice(0, 12)); // primeiros 12 thumbs
       } catch (err) {
         document.getElementById("grid-racas").innerHTML = `
           <div class="sem-resultados" style="grid-column:1/-1">
@@ -481,6 +518,7 @@
       }
     }
 
+    // ── Renderiza o grid de cards ─────────────────────────────
     function renderizarGrid(lista) {
       const grid     = document.getElementById("grid-racas");
       const contador = document.getElementById("contador-resultados");

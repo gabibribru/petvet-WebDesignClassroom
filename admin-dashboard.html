@@ -117,7 +117,6 @@
     .status-recuperacao  { background-color: rgba(243,156,18,.2); color: var(--cor-aviso); }
     .status-inativo      { background-color: rgba(231,76,60,.2);  color: var(--cor-erro); }
     .status-processando  { background-color: rgba(58,160,185,.2); color: var(--cor-secundaria); }
-
     .secao-admin {
       background-color: var(--cor-cartao);
       border-radius: var(--raio-borda);
@@ -267,8 +266,8 @@
       </div>
     </header>
 
+    <!-- Conteúdo Principal -->
     <main class="conteudo-principal">
-
       <div class="dashboard-grid">
         <div class="card-metrica consultas">
           <div class="metrica-icone">📅</div>
@@ -295,7 +294,6 @@
           <p class="metrica-mudanca">Todas estáveis</p>
         </div>
       </div>
-
       <div class="secao-admin">
         <div class="abas">
           <button class="aba-botao ativo" onclick="mudarAba('consultas', this)">📋 Consultas</button>
@@ -330,7 +328,7 @@
           </table>
         </div>
 
-        <!-- CRUD -->
+        <!--(CRUD) -->
         <div id="aba-usuarios" class="secao-aba">
           <div class="aba-header">
             <h3>Cadastro de Pessoas</h3>
@@ -463,6 +461,7 @@
       renderizarUsuarios();
     });
 
+    // ── Abas ──────────────────────────────────────────────────
     function mudarAba(id, btn) {
       document.querySelectorAll(".secao-aba").forEach(a => a.classList.remove("ativa"));
       document.querySelectorAll(".aba-botao").forEach(b => b.classList.remove("ativo"));
@@ -471,6 +470,7 @@
       if (id === "usuarios") renderizarUsuarios();
     }
 
+    // ── Render: Consultas ─────────────────────────────────────
     function renderizarConsultas() {
       document.getElementById("corpo-consultas").innerHTML = consultas.map(c => `
         <tr>
@@ -486,6 +486,7 @@
         </tr>`).join("");
     }
 
+    // ── Render: Exames ────────────────────────────────────────
     function renderizarExames() {
       document.getElementById("corpo-exames").innerHTML = exames.map(e => `
         <tr>
@@ -497,6 +498,7 @@
         </tr>`).join("");
     }
 
+    // ── Render: Internações ───────────────────────────────────
     function renderizarInternacoes() {
       document.getElementById("corpo-internacoes").innerHTML = internacoes.map(i => `
         <tr>
@@ -512,7 +514,11 @@
         </tr>`).join("");
     }
 
-    // CRUD
+    // ════════════════════════════════════════════════════════
+    //  CRUD de Pessoas
+    // ════════════════════════════════════════════════════════
+
+    // READ
     function renderizarUsuarios() {
       const termo    = (document.getElementById("busca-usuario")?.value || "").toLowerCase();
       const logadoId = window.petvet.usuarioManager.getUsuarioAtual()?.id;
@@ -550,6 +556,7 @@
       }
     }
 
+    // OPEN MODAL — create
     function abrirModal() {
       limparModal();
       document.getElementById("modal-titulo").textContent = "Nova Pessoa";
@@ -558,6 +565,7 @@
       document.getElementById("modal-pessoa").classList.add("visivel");
     }
 
+    // OPEN MODAL — edit
     function abrirModalEdicao(id) {
       const u = window.petvet.usuarioManager.getUsuarios().find(u => u.id === id);
       if (!u) return;
@@ -595,6 +603,7 @@
       if (e.target === this) fecharModal();
     });
 
+    // SAVE
     function salvarPessoa(event) {
       event.preventDefault();
       const msgErro = document.getElementById("modal-msg-erro");
@@ -641,6 +650,7 @@
       renderizarUsuarios();
     }
 
+    // DELETE
     function deletarPessoa(id) {
       const u = window.petvet.usuarioManager.getUsuarios().find(u => u.id === id);
       if (!u) return;
@@ -649,6 +659,7 @@
       renderizarUsuarios();
     }
 
+    // ── Máscaras ──────────────────────────────────────────────
     function mascaraCPF(input) {
       let v = input.value.replace(/\D/g, "").slice(0, 11);
       if (v.length > 9)      v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
@@ -666,6 +677,7 @@
       input.value = v;
     }
 
+    // ── Utilitário ────────────────────────────────────────────
     function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ""; }
   </script>
 </body>
